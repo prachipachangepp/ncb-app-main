@@ -27,7 +27,7 @@ class InlineWidget extends WidgetFactory {
         ),
       );
     }
-
+//
     super.parse(meta);
   }
 }
