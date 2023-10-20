@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "136540643262",
+    "project_id": "new-community-bible",
+    "storage_bucket": "new-community-bible.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:136540643262:android:73d1749350c0bf6833e3ef",
+        "android_client_info": {
+          "package_name": "in.ncb"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "136540643262-qhsqsc6qnlou7ck62olnng9ils7csemt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLIBJA3kCvO4-IPJoT0m_QKYHlTbVwzNc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "136540643262-qhsqsc6qnlou7ck62olnng9ils7csemt.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "136540643262-seh6hl1iuc8tb3i5sa2r7s887a8n6igd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "in.wi.ncb"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
