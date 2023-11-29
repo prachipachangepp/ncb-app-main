@@ -1,3 +1,4 @@
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'static_content.freezed.dart';
