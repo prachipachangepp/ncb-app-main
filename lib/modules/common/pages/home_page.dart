@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:day_night_switcher/day_night_switcher.dart';
 import 'package:flrx/flrx.dart';
 import 'package:flutter/foundation.dart';

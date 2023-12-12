@@ -6,10 +6,11 @@ import 'package:ncb/modules/common/common_module.dart';
 import 'package:ncb/modules/debug/debug_module.dart';
 
 class AppConfig extends ApplicationConfig {
-  static const apiUrl = String.fromEnvironment(
-    "API_URL",
-  );
+  // static const apiUrl = String.fromEnvironment(
+  //   "API_URL",
+  // );
 
+  static const apiUrl = "https://admin.newcommunitybible.in/api/";
   static const List<String> _supportedLocales = <String>[
     "en",
     "fr",

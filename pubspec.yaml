@@ -41,6 +41,7 @@ dependencies:
   pretty_dio_logger:
   http: any
   platform_info: any
+  package_info_plus: ^1.4.2
   recase: any
   google_fonts:
   clipboard: any
@@ -66,6 +67,7 @@ dependencies:
 
 dependency_overrides:
   intl: any
+  package_info_plus: any
 
 dev_dependencies:
   build_runner: any

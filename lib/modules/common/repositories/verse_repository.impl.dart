@@ -11,16 +11,13 @@ class VerseRepositoryImpl extends VerseRepository
         LaravelResourceDeserializer {
   @override
   Verse fromJson(Map<String, dynamic> json) => Verse.fromJson(json);
-
   @override
   Future<List<Verse>> search(String params) async {
     final data = params;
-
     final result = await dio.post<Map<String, dynamic>>(
       'verses/search',
       data: data,
     );
-
     return deserializeEntityList(result.data);
   }
 }
