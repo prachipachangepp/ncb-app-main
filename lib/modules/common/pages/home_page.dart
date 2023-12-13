@@ -12,6 +12,7 @@ import 'package:ncb/modules/common/pages/lexicon_page.dart';
 import 'package:ncb/modules/common/pages/search_page.dart';
 import 'package:ncb/modules/common/pages/static_page.dart';
 import 'package:ncb/modules/common/pages/testament_page.dart';
+
 import 'package:ncb/store/states/app_state.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -70,6 +71,7 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
   String get appBarTitle {
     return [
       'Preface',
+      // 'Bookmark',
       'Presentation',
       'Bookmark',
       'General Introduction',
@@ -91,6 +93,7 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
         ),
         [
           const StaticPage(url: 'preface'),
+          // const BookmarkPage(),
           const StaticPage(url: 'presentation'),
           const BookMarkPage(),
           const StaticPage(url: 'introduction'),
@@ -183,11 +186,19 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
   }
 
   List<ListTile> drawerTiles() {
+
     return [
       ListTile(
         title: const Text('Preface'),
         onTap: () => setPageAndPop(0),
       ),
+      // ListTile(
+      //   title: const Text('Bookmark'),
+      //   onTap: () {
+      //     BookMarkPage();
+      //     Navigator.pop(context);
+      //   },
+      // ),
       ListTile(
         title: const Text('Presentation'),
         onTap: () => setPageAndPop(1),

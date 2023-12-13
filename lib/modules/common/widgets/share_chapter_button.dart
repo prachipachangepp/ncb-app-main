@@ -18,7 +18,7 @@ class ShareChapterButton extends StatelessWidget {
       margin: const EdgeInsets.all(2),
       child: NcbButtonSmall(
         onTap: shareChapter,
-        child: const Icon(Icons.share),
+        child: const Icon(Icons.share, size: 19),
       ),
     );
   }
