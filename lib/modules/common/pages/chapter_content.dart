@@ -11,6 +11,8 @@ import 'package:ncb/modules/common/models/verse.dart';
 import 'package:ncb/modules/common/pages/home_page.dart';
 import 'package:ncb/modules/common/widgets/commentary_button.dart';
 import 'package:ncb/modules/common/widgets/footnote_button.dart';
+import 'package:ncb/modules/common/widgets/ncb_button_small.dart';
+import 'package:ncb/modules/common/widgets/share_chapter_button.dart';
 import 'package:ncb/modules/common/widgets/share_verse_button.dart';
 import 'package:recase/recase.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -47,7 +49,17 @@ class ChapterContentState extends State<ChapterContent> {
     return Scaffold(
       appBar: AppBar(
         title: Text("${widget.book.name.titleCase}: ${widget.chapter.name}"),
-        actions: HomePageState.buildAppBarActions(),
+        actions: HomePageState.buildAppBarActions()
+          ..insert(
+            0,
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 10),
+              child: ShareChapterButton(
+                chapter: widget.chapter,
+                bookName: widget.book.name.titleCase,
+              ),
+            ),
+          ),
       ),
       bottomNavigationBar: hasAudio ? buildAudioPlayer() : null,
       body: ScrollablePositionedList.builder(
@@ -107,7 +119,7 @@ class ChapterContentState extends State<ChapterContent> {
                       .textTheme
                       .bodyText2
                       ?.copyWith(height: 1.8),
-                  children: buttonsForVerse(verse),
+                  children: buttonsForVerse(verse, context),
                 ),
               ),
             ],
@@ -117,7 +129,7 @@ class ChapterContentState extends State<ChapterContent> {
     );
   }
 
-  static List<InlineSpan> buttonsForVerse(Verse verse) {
+  static List<InlineSpan> buttonsForVerse(Verse verse, BuildContext context) {
     return [
       WidgetSpan(child: ShareVerseButton(verse: verse)),
       if (verse.commentaries!.isNotEmpty)
@@ -135,6 +147,15 @@ class ChapterContentState extends State<ChapterContent> {
             ),
           ) ??
           List.empty(),
+      WidgetSpan(
+        child: Container(
+          margin: const EdgeInsets.all(4),
+          child: NcbButtonSmall(
+            onTap: () {},
+            child: const Icon(Icons.bookmark_outline_rounded),
+          ),
+        ),
+      ),
     ];
   }
 

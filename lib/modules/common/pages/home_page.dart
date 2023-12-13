@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:day_night_switcher/day_night_switcher.dart';
 import 'package:flrx/flrx.dart';
 import 'package:flutter/foundation.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart' hide Page;
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:ncb/app.dart';
+import 'package:ncb/modules/common/pages/bookmark.dart';
 import 'package:ncb/modules/common/pages/lexicon_page.dart';
 import 'package:ncb/modules/common/pages/search_page.dart';
 import 'package:ncb/modules/common/pages/static_page.dart';
@@ -22,7 +24,7 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
-  var page = 4;
+  var page = 5;
   bool showSearchView = false;
   String query = "";
 
@@ -69,6 +71,7 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
     return [
       'Preface',
       'Presentation',
+      'Bookmark',
       'General Introduction',
       'List of Collaborators',
       'New Community Bible',
@@ -89,6 +92,7 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
         [
           const StaticPage(url: 'preface'),
           const StaticPage(url: 'presentation'),
+          const BookMarkPage(),
           const StaticPage(url: 'introduction'),
           const StaticPage(url: 'collaborator'),
           const TestamentPage(),
@@ -189,20 +193,24 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
         onTap: () => setPageAndPop(1),
       ),
       ListTile(
-        title: const Text('General Introduction'),
+        title: const Text('Bookmark'),
         onTap: () => setPageAndPop(2),
       ),
       ListTile(
-        title: const Text('List of Collaborators'),
+        title: const Text('General Introduction'),
         onTap: () => setPageAndPop(3),
       ),
       ListTile(
-        title: const Text('New Community Bible'),
+        title: const Text('List of Collaborators'),
         onTap: () => setPageAndPop(4),
       ),
       ListTile(
-        title: const Text('Lexicon'),
+        title: const Text('New Community Bible'),
         onTap: () => setPageAndPop(5),
+      ),
+      ListTile(
+        title: const Text('Lexicon'),
+        onTap: () => setPageAndPop(6),
       ),
       ListTile(
         title: const Text('Share App'),

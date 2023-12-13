@@ -26,7 +26,7 @@ class ShareVerseButton extends StatelessWidget {
     var chapter = verse.chapter;
     var book = chapter?.book;
     var title = book != null && chapter != null
-        ? "${book.name.titleCase} ${chapter.displayPosition}\n"
+        ? "${book.name.titleCase}\n${chapter.name} : ${verse.verseNo}\n"
         : "";
     Share.share(title + verseText);
   }
