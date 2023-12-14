@@ -15,6 +15,7 @@ class Verse with DataModel, _$Verse {
     required String verse,
     required int order,
     required int chapterId,
+    bool? bookmark,
     List<Footnote>? footnotes,
     List<Commentary>? commentaries,
     Chapter? chapter,
