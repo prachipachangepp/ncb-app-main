@@ -5,10 +5,11 @@ class NcbButtonSmall extends StatelessWidget {
   final Widget child;
 
   const NcbButtonSmall({
-    Key? key,
+  //  Key? key,
     required this.onTap,
     required this.child,
-  }) : super(key: key);
+  }) ;
+      //: super(key: key);
 
   @override
   Widget build(BuildContext context) {

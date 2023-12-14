@@ -10,11 +10,37 @@ class BookMarkButton extends StatefulWidget {
 }
 
 class _BookMarkButtonState extends State<BookMarkButton> {
+//  bool isBookmarked = false;
+  late ValueNotifier<bool> isBookmarkedNotifier;
+
+  @override
+  void initState() {
+    super.initState();
+    isBookmarkedNotifier = ValueNotifier<bool>(false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return NcbButtonSmall(
-      onTap: () {},
-      child: const Icon(Icons.bookmark_outline_rounded),
+      onTap: () {
+        isBookmarkedNotifier.value = !isBookmarkedNotifier.value;
+      },
+      child: ValueListenableBuilder<bool>(
+        valueListenable: isBookmarkedNotifier,
+        builder: (context, isBookmarked, child){
+          return isBookmarked
+              ? const Icon(
+            Icons.bookmark_rounded,
+            color: Colors.red, // Filled with red color when bookmarked
+          )
+              : const Icon(Icons.bookmark_outline_rounded);
+        },
+      ),
     );
+  }
+  @override
+  void dispose() {
+    isBookmarkedNotifier.dispose();
+    super.dispose();
   }
 }
