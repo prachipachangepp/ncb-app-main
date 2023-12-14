@@ -2,15 +2,21 @@ import 'package:flrx/components/error_manager/error_manager.dart';
 import 'package:flrx/flrx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ncb/app.dart';
 import 'package:ncb/config/app_config.dart';
 import 'package:ncb/config/error_reporter_config.dart';
 import 'package:ncb/store/states/app_state.dart';
 import 'package:ncb/store/store_retriever.dart';
+import 'package:ncb/verselocal.dart';
 import 'package:redux/redux.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  Hive.registerAdapter(VerselocalAdapter());
+  Hive.openBox<Verselocal>('bookmarks');
+
   AppRouter.setNotFoundWidget((p) => StatefulBuilder(builder: (c, _) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           Navigator.pushNamedAndRemoveUntil(c, '/', ModalRoute.withName('/'));

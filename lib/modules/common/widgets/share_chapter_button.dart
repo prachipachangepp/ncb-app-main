@@ -18,13 +18,17 @@ class ShareChapterButton extends StatelessWidget {
       margin: const EdgeInsets.all(2),
       child: NcbButtonSmall(
         onTap: shareChapter,
-        child: const Icon(Icons.share, size: 19),
+        child: const Icon(
+          Icons.share,
+          size: 25,
+        ),
       ),
     );
   }
 
   void shareChapter() {
     String versesText = "$bookName, ${chapter.name}\n";
+    print(chapter.verses!.length);
     for (var a in chapter.verses!) {
       var verseText = Bidi.stripHtmlIfNeeded(a.verse);
       versesText =
