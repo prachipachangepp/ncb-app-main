@@ -64,6 +64,8 @@ dependencies:
   firebase_core: any
   firebase_crashlytics: any
   firebase_analytics: any
+  sqflite: ^2.3.0
+  path_provider: ^2.0.15
 
 dependency_overrides:
   intl: any

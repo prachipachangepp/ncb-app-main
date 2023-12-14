@@ -60,7 +60,14 @@ class BookPage extends StatelessWidget with Page<AppState, BookPageVM> {
       crossAxisSpacing: crossAxisSpacing.toDouble(),
       mainAxisSpacing: crossAxisSpacing.toDouble(),
       children: chapters.map((e) => buildChapterCell(context, e)).toList()
-        ..insert(0, buildCell(context, '/book/$bookId/intro', 'Introduction')),
+        ..insert(
+          0,
+          buildCell(
+            context,
+            '/book/$bookId/intro',
+            'Introduction',
+          ),
+        ),
     );
   }
 
@@ -68,10 +75,16 @@ class BookPage extends StatelessWidget with Page<AppState, BookPageVM> {
     var routeName = '/book/$bookId/chapter/${e.id}';
     var cellName = e.name;
 
+    print(e.verses);
+
     return buildCell(context, routeName, cellName);
   }
 
-  InkWell buildCell(BuildContext context, String routeName, String cellName) {
+  InkWell buildCell(
+    BuildContext context,
+    String routeName,
+    String cellName,
+  ) {
     return InkWell(
       onTap: () => Navigator.pushNamed(context, routeName),
       child: Container(
