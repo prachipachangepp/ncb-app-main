@@ -19,12 +19,16 @@ class TestamentPageVM extends ViewModel<AppState> {
   String? error;
 
   Banner? banner;
-
   @override
   void init(Store<AppState> store) {
     dispatch = store.dispatch;
+
     testaments = store.state.testamentState.testaments;
     loadingState = store.state.testamentState.loadingState;
+    // testamentsLive!.forEach((element) {
+    //   testamentsBox.add(TestamentLocal(id: element.id, displayPosition: element.displayPosition, name: element.name, books: element.books!.map((book) {
+    //   BookLocal(id: book.id, name: book.name, displayPosition: book.displayPosition, testamentId: book.testamentId, introduction: book.introduction, chapters: book.chapters );
+    // }).toList())) });
     bannerLoadingState = store.state.bannerState.loadingState;
     banner = store.state.bannerState.banner;
     error = store.state.testamentState.error;

@@ -6,33 +6,38 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:ncb/modules/common/models/book.dart';
+import 'package:ncb/book_local.dart';
+import 'package:ncb/chapter_local.dart';
 import 'package:ncb/modules/common/models/chapter.dart';
 import 'package:ncb/modules/common/models/verse.dart';
 import 'package:ncb/modules/common/pages/home_page.dart';
-import 'package:ncb/modules/common/widgets/commentary_button.dart';
-import 'package:ncb/modules/common/widgets/footnote_button.dart';
-import 'package:ncb/modules/common/widgets/ncb_button_small.dart';
 import 'package:ncb/modules/common/widgets/share_chapter_button.dart';
-import 'package:ncb/modules/common/widgets/share_verse_button.dart';
 import 'package:recase/recase.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:sorted/sorted.dart';
 
 import '../../../verselocal.dart';
+import '../widgets/commentary_button.dart';
+import '../widgets/footnote_button.dart';
+import '../widgets/ncb_button_small.dart';
+import '../widgets/share_verse_button.dart';
+
+typedef void BookmarckChangedCallBack(Verselocal verselocal);
 
 class ChapterContent extends StatefulWidget {
-  final Book book;
-  final Chapter chapter;
+  final BookLocal book;
+  final ChapterLocal chapter;
+  final BookmarckChangedCallBack bookmarckChangedCallBack;
   final String? currentAudio;
   final ValueSetter<String?> onAudioChanged;
 
-  const ChapterContent({
+  ChapterContent({
     Key? key,
     required this.chapter,
     required this.book,
     this.currentAudio,
     required this.onAudioChanged,
+    required this.bookmarckChangedCallBack,
   }) : super(key: key);
 
   @override
@@ -42,12 +47,40 @@ class ChapterContent extends StatefulWidget {
 class ChapterContentState extends State<ChapterContent> {
   AudioPlayer get player => Application.get<AudioPlayer>();
   final ItemScrollController itemScrollController = ItemScrollController();
+  Box<Verselocal> bookmarkBox = Hive.box<Verselocal>('bookmarks');
+  List<Verselocal> verses = [];
+  List<Verselocal> versl = [];
+  bool first = true;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    chapter = Chapter(
+        id: widget.chapter.id,
+        audio: widget.chapter.audio,
+        displayPosition: widget.chapter.displayPosition,
+        bookId: widget.chapter.bookId,
+        name: widget.chapter.name,
+        verses: widget.chapter.verses!
+            .map((e) => Verse(
+                id: e.id,
+                verseNo: e.verseNo,
+                verse: e.verse,
+                order: e.order,
+                chapterId: widget.chapter.id))
+            .toList());
+  }
+
+  Chapter? chapter;
 
   @override
   Widget build(BuildContext context) {
-    print(widget.chapter.verses!.length);
-    var verses = widget.chapter.verses!
-        .sorted([SortedComparable<Verse, int>((v) => v.verseNo)]);
+    var verses = widget.chapter!.verses!;
+    if (first) {
+      first = false;
+    }
+    print(versl.length);
+
     var hasAudio = widget.chapter.audio?.isNotEmpty == true;
 
     return Scaffold(
@@ -59,7 +92,7 @@ class ChapterContentState extends State<ChapterContent> {
             Container(
               margin: EdgeInsets.symmetric(horizontal: 10),
               child: ShareChapterButton(
-                chapter: widget.chapter,
+                chapter: chapter!,
                 bookName: widget.book.name.titleCase,
               ),
             ),
@@ -72,7 +105,7 @@ class ChapterContentState extends State<ChapterContent> {
         padding: EdgeInsets.zero,
         itemBuilder: (context, index) {
           if (index == 0) {
-            return buildQuickJump(widget.chapter);
+            return buildQuickJump(chapter!);
           }
 
           if (index == verses.length + 1) {
@@ -80,9 +113,16 @@ class ChapterContentState extends State<ChapterContent> {
           }
 
           if (index < verses.length + 1) {
-            var chapter = widget.chapter.copyWith(book: widget.book);
-            var verse = verses[index - 1].copyWith(chapter: chapter);
-
+            var vers = verses[index - 1];
+            print(vers);
+            vers.chapter = ChapterLocal(
+                id: chapter!.id,
+                audio: chapter!.audio,
+                displayPosition: chapter!.displayPosition,
+                bookId: chapter!.bookId,
+                name: chapter!.name,
+                verses: [],
+                book: widget.book);
             return Container(
               color: index % 2 == 0
                   ? Theme.of(context).brightness == Brightness.dark
@@ -90,7 +130,62 @@ class ChapterContentState extends State<ChapterContent> {
                       : Colors.grey[300]
                   : null,
               padding: const EdgeInsets.all(16),
-              child: buildVerseRow(verse, context),
+              child: VerseRow(
+                verse: vers,
+                callBackBookmark: (bool value) async {
+                  if (!vers.save) {
+                    bookmarkBox.add(Verselocal(
+                      verseNo: vers.verseNo,
+                      verse: vers.verse,
+                      order: vers.order,
+                      id: vers.id,
+                      save: vers.save,
+                      footnotes: vers.footnotes,
+                      commentaries: vers.commentaries,
+                      chapter: widget.chapter,
+                    ));
+                    widget.bookmarckChangedCallBack(Verselocal(
+                        save: true,
+                        verseNo: vers.verseNo,
+                        verse: vers.verse,
+                        order: vers.order,
+                        chapter: widget.chapter,
+                        id: vers.id));
+                    setState(() {
+                      verses[index - 1].save = true;
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Added to bookmark")));
+                  } else {
+                    int jkf = 0;
+                    int k = 0;
+                    for (var element in bookmarkBox.values) {
+                      if (element.verseNo ==
+                          widget.chapter.verses![index].verseNo) {
+                        k = jkf;
+                      }
+                      jkf++;
+                    }
+                    bookmarkBox.deleteAt(k);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("removed from bookmark")));
+                    // print(bookmarkBox.length);
+                    // print("removed");
+                    widget.bookmarckChangedCallBack(Verselocal(
+                        save: false,
+                        verseNo: vers.verseNo,
+                        verse: vers.verse,
+                        chapter: widget.chapter,
+                        order: vers.order,
+                        id: vers.id));
+
+                    setState(() {
+                      verses[index - 1].save = false;
+                    });
+                  }
+                },
+                bookMark: verses[index - 1].save,
+              ),
             );
           }
 
@@ -100,101 +195,26 @@ class ChapterContentState extends State<ChapterContent> {
     );
   }
 
-  static Row buildVerseRow(Verse verse, BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.baseline,
-      textBaseline: TextBaseline.alphabetic,
-      children: [
-        Container(
-          alignment: Alignment.topCenter,
-          height: 36,
-          width: 36,
-          child: Text("${verse.verseNo}. "),
-        ),
-        Expanded(
-          child: Wrap(
-            children: [
-              Text.rich(
-                TextSpan(
-                  text: Bidi.stripHtmlIfNeeded(
-                    verse.verse,
-                  ).trim(),
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText2
-                      ?.copyWith(height: 1.8),
-                  children: buttonsForVerse(verse, context),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  static List<InlineSpan> buttonsForVerse(Verse verse, BuildContext context) {
-    return [
-      WidgetSpan(child: ShareVerseButton(verse: verse)),
-      if (verse.commentaries!.isNotEmpty)
-        WidgetSpan(
-          child: CommentaryButton(
-            commentary: verse.commentaries![0],
-          ),
-        ),
-      ...verse.footnotes?.map(
-            (footnote) => WidgetSpan(
-              child: FootnoteButton(
-                footnote: footnote,
-                verse: verse,
-              ),
-            ),
-          ) ??
-          List.empty(),
-      WidgetSpan(
-        child: Container(
-          margin: const EdgeInsets.all(5),
-          child: NcbButtonSmall(
-            onTap: () async {
-              Box<Verselocal> bookmarkBox = Hive.box<Verselocal>('bookmarks');
-              List<Verselocal> v = bookmarkBox.values
-                  .where((element) => element.id == verse.id)
-                  .toList();
-
-              if (v.isNotEmpty) {
-                //await bookmarkBox.delete(verse.id);
-                print(bookmarkBox.length);
-              } else {
-                bookmarkBox.add(Verselocal(
-                    verseNo: verse.verseNo,
-                    verse: verse.verse,
-                    order: verse.order,
-                    id: verse.id));
-                print(bookmarkBox.length);
-                print("added");
-              }
-            },
-            child: const Icon(
-              Icons.bookmark_outline_rounded,
-              size: 20,
-            ),
-          ),
-        ),
-      ),
-    ];
-  }
-
   Container buildNavigateChapters() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(24, 64, 24, 128),
+      padding: const EdgeInsets.fromLTRB(10, 64, 10, 128),
       child: Row(
         children: [
           ElevatedButton(
             onPressed: () {
               var bookId = widget.book.id;
-              var nextChapterId = widget.chapter.id - 1;
+              int index = 0;
+              var nextChapterId = widget.chapter.name;
+              for (var c in widget.book.chapters!) {
+                print(c.name);
+                if (c.name == widget.chapter.name) {
+                  nextChapterId = widget.book.chapters![index - 1].name;
+                }
+                index++;
+              }
 
               var routeName = '/book/$bookId/chapter/$nextChapterId';
+              print(nextChapterId);
 
               Navigator.pushReplacementNamed(
                 context,
@@ -207,9 +227,18 @@ class ChapterContentState extends State<ChapterContent> {
           ElevatedButton(
             onPressed: () {
               var bookId = widget.book.id;
-              var nextChapterId = widget.chapter.id + 1;
+              int index = 0;
+              var nextChapterId = widget.chapter.name;
+              for (var c in widget.book.chapters!) {
+                print(c.name);
+                if (c.name == widget.chapter.name) {
+                  nextChapterId = widget.book.chapters![index + 1].name;
+                }
+                index++;
+              }
 
               var routeName = '/book/$bookId/chapter/$nextChapterId';
+              print(nextChapterId);
 
               Navigator.pushReplacementNamed(
                 context,
@@ -239,7 +268,7 @@ class ChapterContentState extends State<ChapterContent> {
             child: Card(
               color: Theme.of(context).colorScheme.surface,
               child: ExpansionTile(
-                title: const Text('Jump to verse '),
+                title: const Text('Jump to verse'),
                 textColor: textColor,
                 iconColor: textColor,
                 initiallyExpanded: true,
@@ -367,5 +396,91 @@ class ChapterContentState extends State<ChapterContent> {
     }
 
     player.play();
+  }
+}
+
+typedef void CallBackBookmark(bool value);
+
+class VerseRow extends StatelessWidget {
+  final Verselocal verse;
+  final bool bookMark;
+  final CallBackBookmark callBackBookmark;
+  const VerseRow(
+      {Key? key,
+      required this.verse,
+      required this.callBackBookmark,
+      required this.bookMark})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
+        children: [
+          Container(
+            alignment: Alignment.topCenter,
+            height: 36,
+            width: 36,
+            child: Text("${verse.verseNo}. "),
+          ),
+          Expanded(
+            child: Wrap(
+              children: [
+                Text.rich(
+                  TextSpan(
+                    text: Bidi.stripHtmlIfNeeded(
+                      verse.verse,
+                    ).trim(),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyText2
+                        ?.copyWith(height: 1.8),
+                    children: [
+                      WidgetSpan(child: ShareVerseButton(verse: verse)),
+                      if (verse.commentaries!.isNotEmpty)
+                        WidgetSpan(
+                          child: CommentaryButton(
+                            commentary: verse.commentaries![0],
+                          ),
+                        ),
+                      ...verse.footnotes?.map(
+                            (footnote) => WidgetSpan(
+                              child: FootnoteButton(
+                                footnote: footnote,
+                                verse: verse,
+                              ),
+                            ),
+                          ) ??
+                          List.empty(),
+                      WidgetSpan(
+                        child: Container(
+                          margin: const EdgeInsets.all(2),
+                          child: NcbButtonSmall(
+                            onTap: () async {
+                              callBackBookmark(!bookMark);
+                            },
+                            child: bookMark
+                                ? const Icon(
+                                    Icons.bookmark,
+                                    size: 22,
+                                  )
+                                : const Icon(
+                                    Icons.bookmark_outline_rounded,
+                                    size: 22,
+                                  ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

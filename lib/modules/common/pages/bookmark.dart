@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:ncb/chapter_local.dart';
+import 'package:ncb/commentary_local.dart';
 import 'package:ncb/modules/common/models/verse.dart';
 import 'package:ncb/modules/common/widgets/commentary_button.dart';
 import 'package:ncb/modules/common/widgets/ncb_button_small.dart';
@@ -36,6 +38,7 @@ class BookMarkPageState extends State<BookMarkPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        height: MediaQuery.of(context).size.height,
         child: ListView.builder(
           itemCount: verses.length,
           padding: EdgeInsets.zero,
@@ -68,11 +71,21 @@ class BookMarkPageState extends State<BookMarkPage> {
 
   static List<InlineSpan> buttonsForVerse(Verse verse, BuildContext context) {
     return [
-      WidgetSpan(child: ShareVerseButton(verse: verse)),
+      WidgetSpan(
+          child: ShareVerseButton(
+              verse: Verselocal(
+                  save: false,
+                  verseNo: verse.verseNo,
+                  verse: verse.verse,
+                  order: verse.order,
+                  id: verse.id))),
       if (verse.commentaries!.isNotEmpty)
         WidgetSpan(
           child: CommentaryButton(
-            commentary: verse.commentaries![0],
+            commentary: CommentaryLocal(
+                id: verse.commentaries![0].id,
+                title: verse.commentaries![0].title,
+                content: verse.commentaries![0].content),
           ),
         ),
       WidgetSpan(
@@ -93,10 +106,22 @@ class BookMarkPageState extends State<BookMarkPage> {
                 print(bookmarkBox.length);
               } else {
                 bookmarkBox.add(Verselocal(
-                    verseNo: verse.verseNo,
-                    verse: verse.verse,
-                    order: verse.order,
-                    id: verse.id));
+                  verseNo: verse.verseNo,
+                  verse: verse.verse,
+                  order: verse.order,
+                  id: verse.id,
+                  save: true,
+                  footnotes: [],
+                  commentaries: [],
+                  chapter: ChapterLocal(
+                      id: verse.chapter!.id,
+                      audio: verse.chapter!.audio,
+                      displayPosition: verse.chapter!.displayPosition,
+                      bookId: verse.chapter!.bookId,
+                      name: verse.chapter!.name,
+                      verses: [],
+                      book: null),
+                ));
                 print(bookmarkBox.length);
                 print("added");
               }
@@ -138,18 +163,34 @@ class _BookmarkRowState extends State<BookmarkRow> {
               child: Text("${widget.id}. "),
             ),
             Expanded(
-              child: Wrap(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text.rich(
-                    TextSpan(
-                      text: Bidi.stripHtmlIfNeeded(
-                        widget.verse.verse,
-                      ).trim(),
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText2
-                          ?.copyWith(height: 1.8),
-                    ),
+                  Text(
+                    "${widget.verse.chapter!.book!.name.toUpperCase()}",
+                    style: Theme.of(context)
+                        .textTheme
+                        .subtitle1!
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "${widget.verse.chapter!.name} :${widget.verse.verseNo}",
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
+                  Wrap(
+                    children: [
+                      Text.rich(
+                        TextSpan(
+                          text: Bidi.stripHtmlIfNeeded(
+                            widget.verse.verse,
+                          ).trim(),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2
+                              ?.copyWith(height: 1.8),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -164,7 +205,7 @@ class _BookmarkRowState extends State<BookmarkRow> {
                 onPressed: () {
                   widget.unbook(true);
                 },
-                icon: Icon(Icons.bookmark_remove)),
+                icon: Icon(Icons.delete)),
           ],
         ),
       ],

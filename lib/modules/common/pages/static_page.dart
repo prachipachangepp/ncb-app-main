@@ -1,32 +1,27 @@
-import 'package:flrx/application.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
-import 'package:ncb/modules/common/models/static_content.dart';
-import 'package:ncb/modules/common/service/testament_service.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
+import '../../../static_content_local.dart';
 
 class StaticPage extends StatelessWidget {
   final String url;
 
-  const StaticPage({Key? key, required this.url}) : super(key: key);
+  StaticPage({Key? key, required this.url}) : super(key: key);
+  Box<StaticContentLocal> staticContentBox =
+      Hive.box<StaticContentLocal>('staticContentBox');
+  late StaticContentLocal staticContentLocal;
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<StaticContent>(
-      future: getContent(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.active ||
-            snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: HtmlWidget(snapshot.requireData.content),
-        );
-      },
+    print(staticContentBox.values);
+    staticContentLocal = staticContentBox.get(url)!;
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: HtmlWidget(staticContentLocal.content),
     );
   }
 
-  Future<StaticContent> getContent() async =>
-      (await Application.get<TestamentService>().getContent(url)).data;
+  // Future<StaticContent> getContent() async =>
+  //     (await Application.get<TestamentService>().getContent(url)).data;
 }
