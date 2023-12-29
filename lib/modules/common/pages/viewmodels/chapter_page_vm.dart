@@ -28,9 +28,9 @@ class ChapterPageVM extends ViewModel<AppState> {
   void init(Store<AppState> store) {
     dispatch = store.dispatch;
 
-    book = store.state.testamentState.testaments!
-        .expand((testament) => testament.books)
-        .firstWhere((book) => book.id == bookId);
+    // book = store.state.testamentState.testaments!
+    //     .expand((testament) => testament.books)
+    //     .firstWhere((book) => book.id == bookId);
 
     chapters = store.state.chapterState.chapters;
     loadingState = store.state.chapterState.loadingState;

@@ -41,7 +41,7 @@ class CommonModule extends Module {
           ),
       "/book/:bookId/chapter/:chapterId": (args) => ChapterPage(
             bookId: int.parse(args['bookId']![0]),
-            chapterId: int.parse(args['chapterId']![0]),
+            chapterId: args['chapterId']![0].toString(),
           ),
     };
   }

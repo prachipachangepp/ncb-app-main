@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:laravel_orion/laravel_orion.dart';
 import 'package:ncb/modules/common/models/verse.dart';
 import 'package:ncb/modules/common/pages/chapter_content.dart';
 import 'package:ncb/modules/common/repositories/verse_repository.dart';
+import 'package:ncb/verselocal.dart';
 import 'package:recase/recase.dart';
 
 class SearchView extends StatefulWidget {
@@ -16,8 +20,11 @@ class SearchView extends StatefulWidget {
 
 class _SearchViewState extends State<SearchView> {
   Future<List<Verse>>? results;
+  Future<List<Verselocal>>? localResults;
 
   _SearchViewState();
+
+  Box<Verselocal> verseBox = Hive.box<Verselocal>('verseBox');
 
   @override
   void initState() {
@@ -31,31 +38,44 @@ class _SearchViewState extends State<SearchView> {
   static Future<List<Verse>> search(OrionSearchQueryBuilder builder) =>
       VerseRepository.instance.search(builder.build());
 
+  Future<List<Verselocal>> vocalforlocal() async {
+    print("query ===" + widget.query);
+    await Future.delayed(Duration(microseconds: 300));
+    List<Verselocal> list = widget.query.isEmpty
+        ? verseBox.values.toList()
+        : verseBox.values
+            .where((element) => HtmlEscape()
+                .convert(element.verse)
+                .toLowerCase()
+                .contains(widget.query.toLowerCase()))
+            .toList();
+    return list;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.query.isEmpty) {
       return const Center(child: Text('Start typing to search...'));
     }
 
-    return FutureBuilder<List<Verse>>(
-      future: results,
+    return FutureBuilder<List<Verselocal>>(
+      future: vocalforlocal(),
       builder: (
         BuildContext context,
-        AsyncSnapshot<List<Verse>> snapshot,
+        snapshot,
       ) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (!snapshot.hasData || snapshot.requireData.isEmpty) {
-          return const Center(child: Text('Nothing found'));
+        if (snapshot.hasData) {
+          print(snapshot.data);
         }
-
-        var verseList = snapshot.requireData;
+        var verseList = snapshot.data;
 
         return ListView.builder(
           padding: EdgeInsets.zero,
-          itemCount: verseList.length + 1,
+          itemCount: verseList!.length + 1,
           itemBuilder: (context, position) {
             if (position == 0) {
               return Padding(
@@ -93,7 +113,11 @@ class _SearchViewState extends State<SearchView> {
                         "${book.name.titleCase} ${chapter.displayPosition}",
                         style: Theme.of(context).textTheme.subtitle1,
                       ),
-                    ChapterContentState.buildVerseRow(verse, context),
+                    VerseRow(
+                      verse: verse,
+                      callBackBookmark: (bool value) {},
+                      bookMark: verse.save,
+                    ),
                   ],
                 ),
               ),

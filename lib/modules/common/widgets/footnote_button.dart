@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:ncb/modules/common/models/footnote.dart';
-import 'package:ncb/modules/common/models/verse.dart';
+import 'package:ncb/footnoteslocal.dart';
 import 'package:ncb/modules/common/pages/crossreference_page.dart';
 import 'package:ncb/modules/common/widgets/ncb_button_small.dart';
+import 'package:ncb/verselocal.dart';
 
 class FootnoteButton extends StatelessWidget {
-  final Footnote footnote;
-  final Verse verse;
+  final FootnotesLocal footnote;
+  final Verselocal verse;
 
   const FootnoteButton({Key? key, required this.footnote, required this.verse})
       : super(key: key);
@@ -26,7 +26,10 @@ class FootnoteButton extends StatelessWidget {
             ),
           );
         },
-        child: const Icon(Icons.compare_arrows),
+        child: const Icon(
+          Icons.compare_arrows,
+          size: 20,
+        ),
       ),
     );
   }

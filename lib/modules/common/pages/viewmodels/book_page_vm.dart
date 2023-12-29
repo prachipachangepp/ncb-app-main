@@ -23,14 +23,14 @@ class BookPageVM extends ViewModel<AppState> {
   BookPageVM(this.bookId);
 
   @override
-  void init(Store<AppState> store) {
+  Future<void> init(Store<AppState> store) async {
     dispatch = store.dispatch;
 
     var state = store.state;
 
-    book = state.testamentState.testaments!
-        .expand((testament) => testament.books)
-        .firstWhere((book) => book.id == bookId);
+    // book = state.testamentState.testaments!
+    //     .expand((testament) => testament.books)
+    //     .firstWhere((book) => book.id == bookId);
 
     chapters = state.chapterState.chapters;
     loadingState = state.chapterState.loadingState;

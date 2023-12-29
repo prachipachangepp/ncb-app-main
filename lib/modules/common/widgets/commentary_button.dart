@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:ncb/modules/common/models/commentary.dart';
+import 'package:ncb/commentary_local.dart';
 import 'package:ncb/modules/common/pages/commentary_page.dart';
 import 'package:ncb/modules/common/widgets/ncb_button_small.dart';
 
 class CommentaryButton extends StatelessWidget {
-  final Commentary commentary;
+  final CommentaryLocal commentary;
 
   const CommentaryButton({Key? key, required this.commentary})
       : super(key: key);
@@ -22,7 +22,10 @@ class CommentaryButton extends StatelessWidget {
             }),
           );
         },
-        child: const Icon(Icons.chat),
+        child: const Icon(
+          Icons.chat,
+          size: 20,
+        ),
       ),
     );
   }
