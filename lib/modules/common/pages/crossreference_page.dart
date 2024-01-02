@@ -1,20 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
-import 'package:ncb/modules/common/models/footnote.dart';
+import 'package:hive/hive.dart';
+import 'package:ncb/footnoteslocal.dart';
+import 'package:ncb/modules/common/models/chapter.dart';
 import 'package:ncb/modules/common/models/verse.dart';
-import 'package:ncb/modules/common/repositories/verse_repository.dart';
-import 'package:recase/recase.dart';
+import 'package:ncb/verselocal.dart';
+
+import '../../../book_local.dart';
 
 class FootnotePage extends StatelessWidget {
-  final Footnote footnote;
+  final FootnotesLocal footnote;
+  Box<Verselocal> verseBox = Hive.box<Verselocal>('verseBox');
+  Box<BookLocal> booksBox = Hive.box<BookLocal>('booksBox');
 
-  final Verse verse;
+  final Verselocal verse;
 
-  const FootnotePage({
+  FootnotePage({
     Key? key,
     required this.footnote,
     required this.verse,
   }) : super(key: key);
+
+  Future<List<Verse>> getAllForRelationById(int id) async {
+    List<Verse> local = [];
+    await Future.delayed(Duration(seconds: 1));
+    for (var a in verseBox.values) {
+      for (var foot in a.footnotes!) {
+        if (foot.id == id) {
+          local.add(Verse(
+              id: a.id,
+              verseNo: a.verseNo,
+              verse: a.verse,
+              order: a.order,
+              chapter: Chapter(
+                  id: a.chapter!.id,
+                  audio: a.chapter!.audio,
+                  displayPosition: a.chapter!.displayPosition,
+                  bookId: a.chapter!.bookId,
+                  name: a.chapter!.name),
+              chapterId: a.chapter!.id));
+        }
+      }
+    }
+    return local;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +52,7 @@ class FootnotePage extends StatelessWidget {
         title: const Text('Cross References'),
       ),
       body: FutureBuilder<List<Verse>>(
-        future: VerseRepository.instance
-            .getAllForRelationById<Footnote>(footnote.id),
+        future: getAllForRelationById(footnote.id),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(
@@ -39,7 +67,8 @@ class FootnotePage extends StatelessWidget {
           }
 
           List<Verse> verses = sortVerses(snapshot);
-
+          print("Verse");
+          print(verses);
           return buildBody(verses);
         },
       ),
@@ -68,7 +97,12 @@ class FootnotePage extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       itemBuilder: (BuildContext context, int index) {
         var verse = verses[index];
-
+        String bookName = '';
+        for (var a in booksBox.values) {
+          if (a.id == verse.chapter!.bookId) {
+            bookName = a.name;
+          }
+        }
         return Card(
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -76,7 +110,7 @@ class FootnotePage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "${verse.chapter!.book!.name.titleCase} ${verse.chapter!.displayPosition}:${verse.verseNo}",
+                  "${bookName} ${verse.chapter!.displayPosition}:${verse.verseNo}",
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
                 HtmlWidget(

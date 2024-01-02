@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:ncb/modules/common/models/book.dart';
-import 'package:ncb/modules/common/models/testament.dart';
+import 'package:ncb/book_local.dart';
+import 'package:ncb/testament_local.dart';
 import 'package:recase/recase.dart';
 
 class TestamentGrid extends StatelessWidget {
-  final Testament testament;
+  final TestamentLocal testament;
 
   const TestamentGrid({Key? key, required this.testament}) : super(key: key);
   static const _crossAxisSpacing = 4;
@@ -25,21 +25,27 @@ class TestamentGrid extends StatelessWidget {
       mainAxisSpacing: _crossAxisSpacing.toDouble(),
       children: testament.books.map((book) {
         return InkWell(
-          onTap: () => Navigator.pushNamed(context, '/book/${book.id}'),
+          onTap: () => Navigator.pushNamed(
+            context,
+            '/book/${book.id}',
+          ),
           child: buildBookTile(context, book),
         );
       }).toList(),
     );
   }
 
-  Container buildBookTile(BuildContext context, Book book) {
+  Container buildBookTile(BuildContext context, BookLocal book) {
     return Container(
       height: kToolbarHeight,
       color: Theme.of(context).colorScheme.surface,
       alignment: Alignment.center,
       child: Text(
         book.name.titleCase,
-        style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
+        textAlign: TextAlign.center,
       ),
     );
   }

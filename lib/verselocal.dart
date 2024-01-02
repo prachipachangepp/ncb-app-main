@@ -1,8 +1,7 @@
 import 'package:hive/hive.dart';
-
-import 'modules/common/models/chapter.dart';
-import 'modules/common/models/commentary.dart';
-import 'modules/common/models/footnote.dart';
+import 'package:ncb/chapter_local.dart';
+import 'package:ncb/commentary_local.dart';
+import 'package:ncb/footnoteslocal.dart';
 
 part 'verselocal.g.dart';
 
@@ -16,16 +15,25 @@ class Verselocal {
   final String verse;
   @HiveField(4)
   final int order;
-
-  // @HiveField(5)
-  //final List<FootnotesLocal>? footnotes;
+  @HiveField(5)
+  bool save;
+  @HiveField(6)
+  List<FootnotesLocal>? footnotes;
+  @HiveField(7)
+  List<CommentaryLocal>? commentaries;
+  @HiveField(8)
+  ChapterLocal? chapter;
   // @HiveField(6)
   //final List<Commentary>? commentaries;
   // @HiveField(7)
   /// final Chapter? chapter;
 
   Verselocal(
-      {required this.verseNo,
+      {this.footnotes,
+      this.commentaries,
+      this.chapter,
+      required this.save,
+      required this.verseNo,
       required this.verse,
       required this.order,
       required this.id});
