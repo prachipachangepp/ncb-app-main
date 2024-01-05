@@ -456,16 +456,26 @@ class VerseRow extends StatelessWidget {
                       //       ),
                       //     ) ??
                       //     List.empty(),
-                      ...?verse.footnotes!.isNotEmpty
-                          ? [
-                              WidgetSpan(
-                                child: FootnoteButton(
-                                  footnote: verse.footnotes![0],
-                                  verse: verse,
-                                ),
-                              ),
-                            ]
-                          : [],
+                      ///
+                      if (verse.footnotes!.isNotEmpty)
+                        WidgetSpan(
+                          child: FootnoteButton(
+                            footnote: verse.footnotes![0],
+                            verse: verse,
+                          ),
+                        ),
+
+                      ///footnotebutton
+                      // ...?verse.footnotes!.isNotEmpty
+                      //     ? [
+                      //         WidgetSpan(
+                      //           child: FootnoteButton(
+                      //             footnote: verse.footnotes![0],
+                      //             verse: verse,
+                      //           ),
+                      //         ),
+                      //       ]
+                      //     : [],
                       WidgetSpan(
                         child: Container(
                           margin: const EdgeInsets.all(2),
