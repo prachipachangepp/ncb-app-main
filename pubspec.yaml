@@ -15,7 +15,7 @@ publish_to: none
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.14.0 <3.0.0"
+  sdk: ">=2.18.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -78,7 +78,7 @@ dev_dependencies:
   freezed: any
   flutter_test:
     sdk: flutter
-  json_serializable: ^6.7.1
+  json_serializable: ^6.6.0
   retrofit_generator: any
   icons_launcher: any
   flutter_native_splash: any

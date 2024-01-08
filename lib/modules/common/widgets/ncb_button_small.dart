@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 
-class NcbButtonSmall extends StatelessWidget {
+class NcbButtonSmall extends StatefulWidget {
   final VoidCallback onTap;
   final Widget child;
 
   const NcbButtonSmall({
-  //  Key? key,
+    //  Key? key,
     required this.onTap,
     required this.child,
-  }) ;
-      //: super(key: key);
+  });
 
+  @override
+  State<NcbButtonSmall> createState() => _NcbButtonSmallState();
+}
+
+class _NcbButtonSmallState extends State<NcbButtonSmall> {
+  //: super(key: key);
   @override
   Widget build(BuildContext context) {
     return IconTheme(
@@ -19,8 +24,8 @@ class NcbButtonSmall extends StatelessWidget {
         size: Theme.of(context).textTheme.bodyText2?.fontSize,
       ),
       child: InkWell(
-        onTap: onTap,
-        child: child,
+        onTap: widget.onTap,
+        child: widget.child,
       ),
     );
   }

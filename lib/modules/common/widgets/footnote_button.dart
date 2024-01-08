@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:ncb/footnoteslocal.dart';
 import 'package:ncb/modules/common/pages/crossreference_page.dart';
 import 'package:ncb/modules/common/widgets/ncb_button_small.dart';
-import 'package:ncb/verselocal.dart';
+
+import '../../../footnoteslocal.dart';
+import '../../../verselocal.dart';
 
 class FootnoteButton extends StatelessWidget {
   final FootnotesLocal footnote;
