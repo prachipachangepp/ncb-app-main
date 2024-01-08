@@ -27,17 +27,20 @@ class _BookMarkButtonState extends State<BookMarkButton> {
       },
       child: ValueListenableBuilder<bool>(
         valueListenable: isBookmarkedNotifier,
-        builder: (context, isBookmarked, child){
+        builder: (context, isBookmarked, child) {
           return isBookmarked
               ? const Icon(
-            Icons.bookmark_rounded,
-            color: Colors.red, // Filled with red color when bookmarked
-          )
-              : const Icon(Icons.bookmark_outline_rounded);
+                  Icons.bookmark_outline_rounded,
+                  color: Colors.red, // Filled with red color when bookmarked
+                )
+              : const Icon(
+                  Icons.bookmark_rounded,
+                );
         },
       ),
     );
   }
+
   @override
   void dispose() {
     isBookmarkedNotifier.dispose();

@@ -11,6 +11,7 @@ import 'package:ncb/chapter_local.dart';
 import 'package:ncb/modules/common/models/chapter.dart';
 import 'package:ncb/modules/common/models/verse.dart';
 import 'package:ncb/modules/common/pages/home_page.dart';
+import 'package:ncb/modules/common/widgets/footnote_button.dart';
 import 'package:ncb/modules/common/widgets/share_chapter_button.dart';
 import 'package:recase/recase.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -18,7 +19,6 @@ import 'package:sorted/sorted.dart';
 
 import '../../../verselocal.dart';
 import '../widgets/commentary_button.dart';
-import '../widgets/footnote_button.dart';
 import '../widgets/ncb_button_small.dart';
 import '../widgets/share_verse_button.dart';
 
@@ -445,15 +445,37 @@ class VerseRow extends StatelessWidget {
                             commentary: verse.commentaries![0],
                           ),
                         ),
-                      ...verse.footnotes?.map(
-                            (footnote) => WidgetSpan(
-                              child: FootnoteButton(
-                                footnote: footnote,
-                                verse: verse,
-                              ),
-                            ),
-                          ) ??
-                          List.empty(),
+
+                      ///footnotebutton multiple
+                      // ...verse.footnotes?.map(
+                      //       (footnote) => WidgetSpan(
+                      //         child: FootnoteButton(
+                      //           footnote: footnote,
+                      //           verse: verse,
+                      //         ),
+                      //       ),
+                      //     ) ??
+                      //     List.empty(),
+                      /// footnotebutton single
+                      if (verse.footnotes!.isNotEmpty)
+                        WidgetSpan(
+                          child: FootnoteButton(
+                            footnote: verse.footnotes![0],
+                            verse: verse,
+                          ),
+                        ),
+
+                      ///footnotebutton
+                      // ...?verse.footnotes!.isNotEmpty
+                      //     ? [
+                      //         WidgetSpan(
+                      //           child: FootnoteButton(
+                      //             footnote: verse.footnotes![0],
+                      //             verse: verse,
+                      //           ),
+                      //         ),
+                      //       ]
+                      //     : [],
                       WidgetSpan(
                         child: Container(
                           margin: const EdgeInsets.all(2),

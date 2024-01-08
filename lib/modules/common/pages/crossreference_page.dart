@@ -103,6 +103,7 @@ class FootnotePage extends StatelessWidget {
             bookName = a.name;
           }
         }
+
         return Card(
           child: Padding(
             padding: const EdgeInsets.all(16),
