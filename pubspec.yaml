@@ -62,7 +62,7 @@ dependencies:
       url: https://github.com/ibrahim-mubarak/flutter_orion_utils
       ref: main
   firebase_core: ^2.24.2
-  firebase_crashlytics: any
+  firebase_crashlytics: ^3.4.9
   firebase_analytics: any
   hive: ^2.2.3
   hive_flutter: ^1.1.0
