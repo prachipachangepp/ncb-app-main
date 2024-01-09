@@ -1,43 +1,27 @@
 {
   "project_info": {
-    "project_number": "136540643262",
-    "project_id": "new-community-bible",
-    "storage_bucket": "new-community-bible.appspot.com"
+    "project_number": "609978247834",
+    "firebase_url": "https://ncb-firebase-a9050-default-rtdb.firebaseio.com",
+    "project_id": "ncb-firebase-a9050",
+    "storage_bucket": "ncb-firebase-a9050.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:136540643262:android:73d1749350c0bf6833e3ef",
+        "mobilesdk_app_id": "1:609978247834:android:62eb29561f382c60840d23",
         "android_client_info": {
           "package_name": "in.ncb"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "136540643262-qhsqsc6qnlou7ck62olnng9ils7csemt.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBLIBJA3kCvO4-IPJoT0m_QKYHlTbVwzNc"
+          "current_key": "AIzaSyARXuOGJ8AzSobIeBk1C8JCnzh323CJQm8"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "136540643262-qhsqsc6qnlou7ck62olnng9ils7csemt.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "136540643262-seh6hl1iuc8tb3i5sa2r7s887a8n6igd.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "in.wi.ncb"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
