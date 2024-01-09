@@ -61,13 +61,16 @@ dependencies:
     git:
       url: https://github.com/ibrahim-mubarak/flutter_orion_utils
       ref: main
-  firebase_core: any
+  firebase_core: ^2.24.2
   firebase_crashlytics: any
   firebase_analytics: any
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   hive_generator: ^2.0.1
   connectivity_plus: ^5.0.2
+  cloud_firestore: ^4.14.0
+  firebase_auth: ^4.16.0
+  firebase_storage: ^11.6.0
 
 dependency_overrides:
   intl: any
