@@ -11,6 +11,7 @@ import 'package:ncb/chapter_local.dart';
 import 'package:ncb/modules/common/models/chapter.dart';
 import 'package:ncb/modules/common/models/verse.dart';
 import 'package:ncb/modules/common/pages/home_page.dart';
+import 'package:ncb/modules/common/pages/viewmodels/bottom_nav_bar.dart';
 import 'package:ncb/modules/common/widgets/footnote_button.dart';
 import 'package:ncb/modules/common/widgets/share_chapter_button.dart';
 import 'package:recase/recase.dart';
@@ -44,6 +45,7 @@ class ChapterContent extends StatefulWidget {
 }
 
 class ChapterContentState extends State<ChapterContent> {
+  int _currentIndex = 0;
   AudioPlayer get player => Application.get<AudioPlayer>();
   final ItemScrollController itemScrollController = ItemScrollController();
   Box<Verselocal> bookmarkBox = Hive.box<Verselocal>('bookmarks');
@@ -96,7 +98,15 @@ class ChapterContentState extends State<ChapterContent> {
             ),
           ),
       ),
-      bottomNavigationBar: hasAudio ? buildAudioPlayer() : null,
+      bottomNavigationBar: CustomBottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index){
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+      ),
+     // bottomNavigationBar: hasAudio ? buildAudioPlayer() : null,
       body: ScrollablePositionedList.builder(
         itemScrollController: itemScrollController,
         itemCount: verses.length + 2,
