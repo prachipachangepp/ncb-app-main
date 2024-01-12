@@ -4,11 +4,8 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   catcher
-  cloud_firestore
   connectivity_plus
-  firebase_auth
   firebase_core
-  firebase_storage
   url_launcher_windows
 )
 
