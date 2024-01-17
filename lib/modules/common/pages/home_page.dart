@@ -18,7 +18,6 @@ import 'package:ncb/modules/common/pages/lexicon_page.dart';
 import 'package:ncb/modules/common/pages/search_page.dart';
 import 'package:ncb/modules/common/pages/static_page.dart';
 import 'package:ncb/modules/common/pages/testament_page.dart';
-import 'package:ncb/modules/common/pages/viewmodels/bottom_nav_bar.dart';
 import 'package:ncb/static_content_local.dart';
 import 'package:ncb/store/states/app_state.dart';
 import 'package:share_plus/share_plus.dart';
@@ -34,7 +33,9 @@ import '../models/chapter.dart';
 import '../models/static_content.dart';
 import '../models/testament.dart';
 import '../models/verse.dart';
+import '../service/messaging_services.dart';
 import '../service/testament_service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -261,12 +262,7 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
   bool loading = true;
   bool connection = false;
   bool requested = false;
-  int _currentIndex = 0;
-  final List<Widget> _pages = [
-    TestamentPage(),
-    BookMarkPage(),
-    //shareApp(),
-  ];
+  final _messagingServiced = MessagingService();
 
   Stream<bool> checkConnectivity() async* {
     while (!connection) {
@@ -478,21 +474,13 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
 
     // TODO: implement initState
     super.initState();
+    _messagingServiced.init(context);
   }
 
   @override
   Widget buildContent(BuildContext context, AppVM viewModel) {
-
     return Scaffold(
       key: scaffoldKey,
-      bottomNavigationBar: CustomBottomNavigationBar(
-        currentIndex: _currentIndex,
-          onTap: (index){
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-      ),
       drawer: buildDrawer(),
       body: StreamBuilder<bool>(
         stream: checkConnectivity(),
@@ -523,7 +511,6 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
               requested = false;
             }
 
-           // return _buildBody();
             return Stack(
               children: [
                 buildAppBar(),
@@ -765,26 +752,4 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
       );
     }
   }
-
-  // Widget _buildBody() {
-  //   switch (_currentIndex){
-  //   case 0:
-  //   return Stack(
-  //   children: [
-  //   buildAppBar(),
-  //   loading
-  //   ? LoadingScreen(
-  //   loadingScreenCallBack: (bool value) {
-  //   dbBox.add(DBConfig(created: true));
-  //   setState(() {
-  //   loading = value;
-  //   });
-  //   },
-  //   connection: connection,
-  //   )
-  //       : const SizedBox(),
-  //   ],
-  //   );
-  //   }
-  // }
 }
