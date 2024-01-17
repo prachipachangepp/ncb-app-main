@@ -33,7 +33,9 @@ import '../models/chapter.dart';
 import '../models/static_content.dart';
 import '../models/testament.dart';
 import '../models/verse.dart';
+import '../service/messaging_services.dart';
 import '../service/testament_service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -260,6 +262,7 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
   bool loading = true;
   bool connection = false;
   bool requested = false;
+  final _messagingServiced = MessagingService();
 
   Stream<bool> checkConnectivity() async* {
     while (!connection) {
@@ -471,6 +474,7 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
 
     // TODO: implement initState
     super.initState();
+    _messagingServiced.init(context);
   }
 
   @override
