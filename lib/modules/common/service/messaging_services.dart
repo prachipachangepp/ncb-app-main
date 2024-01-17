@@ -15,7 +15,7 @@ class MessagingService {
   final FirebaseMessaging _fcm = FirebaseMessaging.instance;
 
   Future<void> init(BuildContext context) async {
-    // Requesting permission for notifications
+    /// permission for notifications
     NotificationSettings settings = await _fcm.requestPermission(
       alert: true,
       announcement: false,
@@ -26,10 +26,9 @@ class MessagingService {
       sound: true,
     );
 
-    debugPrint(
-        'User granted notifications permission: ${settings.authorizationStatus}');
+    debugPrint('User granted notifications permission: ${settings.authorizationStatus}');
 
-    // Retrieving the FCM token
+    /// Retrieving the FCM token
     fcmToken = await _fcm.getToken();
     log('fcmToken: $fcmToken');
 
@@ -37,7 +36,6 @@ class MessagingService {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     ///diolog shows from here
-    // Listening for incoming messages while the app is in the foreground
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       debugPrint('Got a message whilst in the foreground!');
       debugPrint('Message data: ${message.notification!.title.toString()}');
@@ -48,7 +46,7 @@ class MessagingService {
           final notificationData = message.data;
           final screen = notificationData['screen'];
 
-          // Showing an alert dialog when a notification is received (Foreground state)
+          /// alert dialog Foreground
           showDialog(
             context: context,
             barrierDismissible: false,
@@ -80,16 +78,13 @@ class MessagingService {
       }
     });
 
-    // Handling the initial message received when the app is launched from dead (killed state)
-    // When the app is killed and a new notification arrives when user clicks on it
-    // It gets the data to which screen to open
     FirebaseMessaging.instance.getInitialMessage().then((message) {
       if (message != null) {
         _handleNotificationClick(context, message);
       }
     });
 
-    // Handling a notification click event when the app is in the background
+    /// Handling a notification click event when the app is in the background
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       debugPrint(
           'onMessageOpenedApp: ${message.notification!.title.toString()}');
@@ -97,7 +92,7 @@ class MessagingService {
     });
   }
 
-  // Handling a notification click event by navigating to the specified screen
+  /// Handling a notification click event by navigating to the specified screen
   void _handleNotificationClick(BuildContext context, RemoteMessage message) {
     final notificationData = message.data;
 
@@ -108,7 +103,7 @@ class MessagingService {
   }
 }
 
-// Handler for background messages
+/// Handler for background messages
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
