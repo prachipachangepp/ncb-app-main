@@ -21,6 +21,7 @@ import 'package:ncb/testament_local.dart';
 import 'package:ncb/verselocal.dart';
 import 'package:redux/redux.dart';
 
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
