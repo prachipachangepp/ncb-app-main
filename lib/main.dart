@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flrx/components/error_manager/error_manager.dart';
 import 'package:flrx/flrx.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:ncb/commentary_local.dart';
 import 'package:ncb/config/app_config.dart';
 import 'package:ncb/config/error_reporter_config.dart';
 import 'package:ncb/dbconfig.dart';
+import 'package:ncb/firebase_options.dart';
 import 'package:ncb/footnoteslocal.dart';
 import 'package:ncb/lexicon_local.dart';
 import 'package:ncb/static_content_local.dart';
@@ -21,6 +23,7 @@ import 'package:redux/redux.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await Hive.initFlutter();
   Hive.registerAdapter(VerselocalAdapter());
   Hive.registerAdapter(ChapterLocalAdapter());
