@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flrx/components/error_manager/error_manager.dart';
 import 'package:flrx/flrx.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,11 @@ import 'package:redux/redux.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+  //   alert: true,
+  //   badge: true,
+  //   sound: true,
+  // );
   await Hive.initFlutter();
   Hive.registerAdapter(VerselocalAdapter());
   Hive.registerAdapter(ChapterLocalAdapter());
