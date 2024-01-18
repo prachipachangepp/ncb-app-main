@@ -32,7 +32,7 @@ class ShareChapterButton extends StatelessWidget {
     for (var a in chapter.verses!) {
       var verseText = Bidi.stripHtmlIfNeeded(a.verse);
       versesText =
-          "$versesText\n${chapter.name} : ${a.verseNo}\n${verseText}\n\n";
+          "$versesText\n${chapter.name} : ${a.verseNo}\n${verseText}\n";
     }
     Share.share(versesText);
   }

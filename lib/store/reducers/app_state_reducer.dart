@@ -36,12 +36,16 @@ class AppStateReducer {
   }
 
   static double reduceTextSize(double textSizeSteps, action) {
+    double minTextSize = 0.7;
+    double maxTextSize = 1.0;
     if (action is IncreaseTextSizeAction) {
-      return textSizeSteps + 0.15;
+      return (textSizeSteps + 0.2).clamp(0.4, 1.4);
     }
 
     if (action is DecreaseTextSizeAction) {
-      return textSizeSteps - 0.15;
+      minTextSize -= 0.1;
+
+      return (textSizeSteps - 0.1).clamp(minTextSize, maxTextSize);
     }
 
     return textSizeSteps;

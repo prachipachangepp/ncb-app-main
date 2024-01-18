@@ -48,7 +48,6 @@ Future<void> main() async {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           Navigator.pushNamedAndRemoveUntil(c, '/', ModalRoute.withName('/'));
         });
-
         return const SizedBox();
       }));
 
