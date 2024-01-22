@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flrx/flrx.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -11,10 +12,14 @@ import 'package:ncb/modules/common/models/verse.dart';
 import 'package:ncb/modules/common/pages/home_page.dart';
 import 'package:ncb/modules/common/widgets/commentary_button.dart';
 import 'package:ncb/modules/common/widgets/footnote_button.dart';
+import 'package:ncb/modules/common/widgets/ncb_button_small.dart';
+import 'package:ncb/modules/common/widgets/share_chapter_button.dart';
 import 'package:ncb/modules/common/widgets/share_verse_button.dart';
 import 'package:recase/recase.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:sorted/sorted.dart';
+
+import '../../../verselocal.dart';
 
 class ChapterContent extends StatefulWidget {
   final Book book;
@@ -40,6 +45,7 @@ class ChapterContentState extends State<ChapterContent> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.chapter.verses!.length);
     var verses = widget.chapter.verses!
         .sorted([SortedComparable<Verse, int>((v) => v.verseNo)]);
     var hasAudio = widget.chapter.audio?.isNotEmpty == true;
@@ -47,7 +53,17 @@ class ChapterContentState extends State<ChapterContent> {
     return Scaffold(
       appBar: AppBar(
         title: Text("${widget.book.name.titleCase}: ${widget.chapter.name}"),
-        actions: HomePageState.buildAppBarActions(),
+        actions: HomePageState.buildAppBarActions()
+          ..insert(
+            0,
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 10),
+              child: ShareChapterButton(
+                chapter: widget.chapter,
+                bookName: widget.book.name.titleCase,
+              ),
+            ),
+          ),
       ),
       bottomNavigationBar: hasAudio ? buildAudioPlayer() : null,
       body: ScrollablePositionedList.builder(
@@ -107,7 +123,7 @@ class ChapterContentState extends State<ChapterContent> {
                       .textTheme
                       .bodyText2
                       ?.copyWith(height: 1.8),
-                  children: buttonsForVerse(verse),
+                  children: buttonsForVerse(verse, context),
                 ),
               ),
             ],
@@ -117,7 +133,7 @@ class ChapterContentState extends State<ChapterContent> {
     );
   }
 
-  static List<InlineSpan> buttonsForVerse(Verse verse) {
+  static List<InlineSpan> buttonsForVerse(Verse verse, BuildContext context) {
     return [
       WidgetSpan(child: ShareVerseButton(verse: verse)),
       if (verse.commentaries!.isNotEmpty)
@@ -135,6 +151,36 @@ class ChapterContentState extends State<ChapterContent> {
             ),
           ) ??
           List.empty(),
+      WidgetSpan(
+        child: Container(
+          margin: const EdgeInsets.all(5),
+          child: NcbButtonSmall(
+            onTap: () async {
+              Box<Verselocal> bookmarkBox = Hive.box<Verselocal>('bookmarks');
+              List<Verselocal> v = bookmarkBox.values
+                  .where((element) => element.id == verse.id)
+                  .toList();
+
+              if (v.isNotEmpty) {
+                //await bookmarkBox.delete(verse.id);
+                print(bookmarkBox.length);
+              } else {
+                bookmarkBox.add(Verselocal(
+                    verseNo: verse.verseNo,
+                    verse: verse.verse,
+                    order: verse.order,
+                    id: verse.id));
+                print(bookmarkBox.length);
+                print("added");
+              }
+            },
+            child: const Icon(
+              Icons.bookmark_outline_rounded,
+              size: 20,
+            ),
+          ),
+        ),
+      ),
     ];
   }
 
