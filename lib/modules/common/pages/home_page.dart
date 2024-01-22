@@ -14,6 +14,8 @@ import 'package:ncb/modules/common/pages/testament_page.dart';
 import 'package:ncb/store/states/app_state.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../service/messaging_services.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -26,6 +28,8 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
   var page = 4;
   bool showSearchView = false;
   String query = "";
+  final _messagingServiced = MessagingService();
+
 
   @override
   Widget buildContent(BuildContext context, AppVM viewModel) {
@@ -34,6 +38,12 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
       drawer: buildDrawer(),
       body: buildAppBar(),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _messagingServiced.init(context);
   }
 
   FloatingSearchAppBar buildAppBar() {

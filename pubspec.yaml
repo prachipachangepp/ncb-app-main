@@ -63,6 +63,7 @@ dependencies:
   firebase_core: any
   firebase_crashlytics: any
   firebase_analytics: any
+  firebase_messaging: any
 
 dependency_overrides:
   intl: any
