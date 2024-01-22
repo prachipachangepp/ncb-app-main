@@ -120,10 +120,12 @@ class ChapterPageState extends State<ChapterPage> {
     if (chapter == null) {
       return const Center(
           child: Text(
-              'Resource not downloaded please turn on the internet connection and go back to chapter / testament page to get this chapter downloaded'));
+              'Resource not downloaded please turn on the internet connection and go back to chapter '
+              '/ testament page to get this chapter downloaded'));
     }
 
     /// verses should be loaded by child ideally
+
     return ChapterContent(
       chapter: chapter!,
       book: bookLocal!,

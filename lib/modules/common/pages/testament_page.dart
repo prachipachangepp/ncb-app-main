@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flrx/flrx.dart';
 import 'package:flutter/material.dart' hide Page, Banner;
@@ -147,11 +148,20 @@ class TestamentPage extends StatelessWidget
   }
 
   Widget buildTestaments(BuildContext context, TestamentLocal testament) {
+    int _currentIndex = 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         buildTestamentHeading(testament, context),
         TestamentGrid(testament: testament),
+        // CustomBottomNavigationBar(
+        //   currentIndex: _currentIndex,
+        //   onTap: (index) {
+        //     // setState(() {
+        //     _currentIndex = index;
+        //     // });
+        //   },
+        // ),
       ],
     );
   }
