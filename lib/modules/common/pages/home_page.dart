@@ -35,7 +35,6 @@ import '../models/testament.dart';
 import '../models/verse.dart';
 import '../service/messaging_services.dart';
 import '../service/testament_service.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -263,6 +262,7 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
   bool connection = false;
   bool requested = false;
   final _messagingServiced = MessagingService();
+  int _currentIndex = 0;
 
   Stream<bool> checkConnectivity() async* {
     while (!connection) {
@@ -471,7 +471,6 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
   @override
   void initState() {
     //syncDataToOffline();
-
     // TODO: implement initState
     super.initState();
     _messagingServiced.init(context);
@@ -482,6 +481,14 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
     return Scaffold(
       key: scaffoldKey,
       drawer: buildDrawer(),
+      // bottomNavigationBar: CustomBottomNavigationBar(
+      //   currentIndex: _currentIndex,
+      //   onTap: (index) {
+      //     setState(() {
+      //       _currentIndex = index;
+      //     });
+      //   },
+      // ),
       body: StreamBuilder<bool>(
         stream: checkConnectivity(),
         builder: (context, snapshot) {

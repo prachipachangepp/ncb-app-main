@@ -6,6 +6,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:ncb/chapter_local.dart';
 import 'package:ncb/commentary_local.dart';
 import 'package:ncb/modules/common/models/verse.dart';
+import 'package:ncb/modules/common/pages/viewmodels/unbook_popup.dart';
 import 'package:ncb/modules/common/widgets/commentary_button.dart';
 import 'package:ncb/modules/common/widgets/ncb_button_small.dart';
 import 'package:ncb/modules/common/widgets/share_verse_button.dart';
@@ -203,7 +204,13 @@ class _BookmarkRowState extends State<BookmarkRow> {
             // IconButton(onPressed: () {}, icon: Icon(Icons.share)),
             IconButton(
                 onPressed: () {
-                  widget.unbook(true);
+                 // widget.unbook(true);
+                  showDialog(
+                    context: context,
+                    builder: (_) =>  UnbookPopUp(unbook: (bool value) {
+                      widget.unbook(true);
+                    },),
+                  );
                 },
                 icon: Icon(Icons.delete)),
           ],

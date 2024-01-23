@@ -44,40 +44,42 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDP6abDqUd7N4GRlnliym4Kmj4SWsrYGos',
-    appId: '1:136540643262:web:974f3e1816519fd833e3ef',
-    messagingSenderId: '136540643262',
-    projectId: 'new-community-bible',
-    authDomain: 'new-community-bible.firebaseapp.com',
-    storageBucket: 'new-community-bible.appspot.com',
-    measurementId: 'G-W98M0WC516',
+    apiKey: 'AIzaSyBW0YltuGO7QdmVZGNX0H4wYCom5dSIBQE',
+    appId: '1:609978247834:web:ea1d302a5ce0b770840d23',
+    messagingSenderId: '609978247834',
+    projectId: 'ncb-firebase-a9050',
+    authDomain: 'ncb-firebase-a9050.firebaseapp.com',
+    databaseURL: 'https://ncb-firebase-a9050-default-rtdb.firebaseio.com',
+    storageBucket: 'ncb-firebase-a9050.appspot.com',
+    measurementId: 'G-HDKJ9T1PFL',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBLIBJA3kCvO4-IPJoT0m_QKYHlTbVwzNc',
-    appId: '1:136540643262:android:73d1749350c0bf6833e3ef',
-    messagingSenderId: '136540643262',
-    projectId: 'new-community-bible',
-    storageBucket: 'new-community-bible.appspot.com',
+    apiKey: 'AIzaSyARXuOGJ8AzSobIeBk1C8JCnzh323CJQm8',
+    appId: '1:609978247834:android:62eb29561f382c60840d23',
+    messagingSenderId: '609978247834',
+    projectId: 'ncb-firebase-a9050',
+    databaseURL: 'https://ncb-firebase-a9050-default-rtdb.firebaseio.com',
+    storageBucket: 'ncb-firebase-a9050.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyALDUi9H2yPxoW8LKOPvyw435NIBEKyEfY',
-    appId: '1:136540643262:ios:654f921aac49e21833e3ef',
-    messagingSenderId: '136540643262',
-    projectId: 'new-community-bible',
-    storageBucket: 'new-community-bible.appspot.com',
-    iosClientId: '136540643262-seh6hl1iuc8tb3i5sa2r7s887a8n6igd.apps.googleusercontent.com',
+    apiKey: 'AIzaSyAadV4laLU4aa-UE_f_VjXiIbq6V_2u0zM',
+    appId: '1:609978247834:ios:839a38ae7063a5c4840d23',
+    messagingSenderId: '609978247834',
+    projectId: 'ncb-firebase-a9050',
+    databaseURL: 'https://ncb-firebase-a9050-default-rtdb.firebaseio.com',
+    storageBucket: 'ncb-firebase-a9050.appspot.com',
     iosBundleId: 'in.wi.ncb',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyALDUi9H2yPxoW8LKOPvyw435NIBEKyEfY',
-    appId: '1:136540643262:ios:654f921aac49e21833e3ef',
-    messagingSenderId: '136540643262',
-    projectId: 'new-community-bible',
-    storageBucket: 'new-community-bible.appspot.com',
-    iosClientId: '136540643262-seh6hl1iuc8tb3i5sa2r7s887a8n6igd.apps.googleusercontent.com',
+    apiKey: 'AIzaSyAadV4laLU4aa-UE_f_VjXiIbq6V_2u0zM',
+    appId: '1:609978247834:ios:839a38ae7063a5c4840d23',
+    messagingSenderId: '609978247834',
+    projectId: 'ncb-firebase-a9050',
+    databaseURL: 'https://ncb-firebase-a9050-default-rtdb.firebaseio.com',
+    storageBucket: 'ncb-firebase-a9050.appspot.com',
     iosBundleId: 'in.wi.ncb',
   );
 }

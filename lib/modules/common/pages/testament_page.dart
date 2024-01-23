@@ -110,7 +110,6 @@ class TestamentPage extends StatelessWidget
 
   Future<bool> checkConnectivity() async {
     final connectivityResult = await (Connectivity().checkConnectivity());
-
     print(connectivityResult.name);
 
     if (connectivityResult == ConnectivityResult.mobile) {
@@ -148,11 +147,20 @@ class TestamentPage extends StatelessWidget
   }
 
   Widget buildTestaments(BuildContext context, TestamentLocal testament) {
+    int _currentIndex = 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         buildTestamentHeading(testament, context),
         TestamentGrid(testament: testament),
+        // CustomBottomNavigationBar(
+        //   currentIndex: _currentIndex,
+        //   onTap: (index) {
+        //     // setState(() {
+        //     _currentIndex = index;
+        //     // });
+        //   },
+        // ),
       ],
     );
   }

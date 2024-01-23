@@ -6,6 +6,7 @@ import 'package:ncb/book_local.dart';
 import 'package:ncb/chapter_local.dart';
 import 'package:ncb/modules/common/pages/home_page.dart';
 import 'package:ncb/modules/common/pages/viewmodels/book_page_vm.dart';
+import 'package:ncb/modules/common/pages/viewmodels/bottom_nav_bar.dart';
 import 'package:ncb/store/states/app_state.dart';
 import 'package:ncb/verselocal.dart';
 
@@ -100,6 +101,7 @@ class BookPage extends StatelessWidget with Page<AppState, BookPageVM> {
 
   @override
   Widget buildContent(BuildContext context, BookPageVM viewModel) {
+    int _currentIndex = 0;
     return FutureBuilder(
       builder: (context, snap) {
         if (snap.hasData) {
@@ -120,6 +122,14 @@ class BookPage extends StatelessWidget with Page<AppState, BookPageVM> {
                 title: Text(bookLocal!.name ?? ""),
                 actions: HomePageState.buildAppBarActions(),
               ),
+              bottomNavigationBar: CustomNavBar(
+                  // currentIndex: _currentIndex,
+                  // onTap: (index) {
+                  //   // setState(() {
+                  //   _currentIndex = index;
+                  //   // });
+                  // },
+                  ),
               body: Center(
                 child: buildOnSuccess(context, viewModel),
               ),

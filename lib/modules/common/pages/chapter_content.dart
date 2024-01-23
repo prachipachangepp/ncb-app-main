@@ -11,6 +11,8 @@ import 'package:ncb/chapter_local.dart';
 import 'package:ncb/modules/common/models/chapter.dart';
 import 'package:ncb/modules/common/models/verse.dart';
 import 'package:ncb/modules/common/pages/home_page.dart';
+import 'package:ncb/modules/common/pages/viewmodels/bottom_nav_bar.dart';
+import 'package:ncb/modules/common/widgets/footnote_button.dart';
 import 'package:ncb/modules/common/widgets/share_chapter_button.dart';
 import 'package:recase/recase.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -18,7 +20,6 @@ import 'package:sorted/sorted.dart';
 
 import '../../../verselocal.dart';
 import '../widgets/commentary_button.dart';
-import '../widgets/footnote_button.dart';
 import '../widgets/ncb_button_small.dart';
 import '../widgets/share_verse_button.dart';
 
@@ -51,6 +52,7 @@ class ChapterContentState extends State<ChapterContent> {
   List<Verselocal> verses = [];
   List<Verselocal> versl = [];
   bool first = true;
+  int _currentIndex = 0;
   @override
   void initState() {
     // TODO: implement initState
@@ -72,7 +74,6 @@ class ChapterContentState extends State<ChapterContent> {
   }
 
   Chapter? chapter;
-
   @override
   Widget build(BuildContext context) {
     var verses = widget.chapter!.verses!;
@@ -98,7 +99,15 @@ class ChapterContentState extends State<ChapterContent> {
             ),
           ),
       ),
-      bottomNavigationBar: hasAudio ? buildAudioPlayer() : null,
+      // bottomNavigationBar: hasAudio ? buildAudioPlayer() : null,
+      bottomNavigationBar: CustomNavBar(
+          // currentIndex: _currentIndex,
+          // onTap: (index) {
+          //   setState(() {
+          //     _currentIndex = index;
+          //   });
+          // },
+          ),
       body: ScrollablePositionedList.builder(
         itemScrollController: itemScrollController,
         itemCount: verses.length + 2,
