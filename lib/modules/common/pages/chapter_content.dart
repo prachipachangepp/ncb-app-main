@@ -445,15 +445,37 @@ class VerseRow extends StatelessWidget {
                             commentary: verse.commentaries![0],
                           ),
                         ),
-                      ...verse.footnotes?.map(
-                            (footnote) => WidgetSpan(
-                              child: FootnoteButton(
-                                footnote: footnote,
-                                verse: verse,
-                              ),
-                            ),
-                          ) ??
-                          List.empty(),
+
+                      ///footnotebutton multiple
+                      // ...verse.footnotes?.map(
+                      //       (footnote) => WidgetSpan(
+                      //         child: FootnoteButton(
+                      //           footnote: footnote,
+                      //           verse: verse,
+                      //         ),
+                      //       ),
+                      //     ) ??
+                      //     List.empty(),
+                      /// footnotebutton single
+                      if (verse.footnotes!.isNotEmpty)
+                        WidgetSpan(
+                          child: FootnoteButton(
+                            footnote: verse.footnotes![0],
+                            verse: verse,
+                          ),
+                        ),
+
+                      ///footnotebutton
+                      // ...?verse.footnotes!.isNotEmpty
+                      //     ? [
+                      //         WidgetSpan(
+                      //           child: FootnoteButton(
+                      //             footnote: verse.footnotes![0],
+                      //             verse: verse,
+                      //           ),
+                      //         ),
+                      //       ]
+                      //     : [],
                       WidgetSpan(
                         child: Container(
                           margin: const EdgeInsets.all(2),
