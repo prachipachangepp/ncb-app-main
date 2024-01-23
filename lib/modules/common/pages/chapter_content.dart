@@ -100,14 +100,14 @@ class ChapterContentState extends State<ChapterContent> {
           ),
       ),
       // bottomNavigationBar: hasAudio ? buildAudioPlayer() : null,
-      bottomNavigationBar: CustomBottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-      ),
+      bottomNavigationBar: CustomNavBar(
+          // currentIndex: _currentIndex,
+          // onTap: (index) {
+          //   setState(() {
+          //     _currentIndex = index;
+          //   });
+          // },
+          ),
       body: ScrollablePositionedList.builder(
         itemScrollController: itemScrollController,
         itemCount: verses.length + 2,

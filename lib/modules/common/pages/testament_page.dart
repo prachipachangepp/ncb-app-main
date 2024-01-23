@@ -110,7 +110,6 @@ class TestamentPage extends StatelessWidget
 
   Future<bool> checkConnectivity() async {
     final connectivityResult = await (Connectivity().checkConnectivity());
-
     print(connectivityResult.name);
 
     if (connectivityResult == ConnectivityResult.mobile) {

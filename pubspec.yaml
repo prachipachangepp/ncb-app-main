@@ -72,7 +72,7 @@ dependencies:
   cloud_firestore: ^4.14.0
   firebase_auth: ^4.16.0
   firebase_storage: ^11.6.0
-
+  share: ^2.0.4
 dependency_overrides:
   intl: any
   package_info_plus: any

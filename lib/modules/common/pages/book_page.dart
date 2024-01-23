@@ -122,14 +122,14 @@ class BookPage extends StatelessWidget with Page<AppState, BookPageVM> {
                 title: Text(bookLocal!.name ?? ""),
                 actions: HomePageState.buildAppBarActions(),
               ),
-              bottomNavigationBar: CustomBottomNavigationBar(
-                currentIndex: _currentIndex,
-                onTap: (index) {
-                  // setState(() {
-                  _currentIndex = index;
-                  // });
-                },
-              ),
+              bottomNavigationBar: CustomNavBar(
+                  // currentIndex: _currentIndex,
+                  // onTap: (index) {
+                  //   // setState(() {
+                  //   _currentIndex = index;
+                  //   // });
+                  // },
+                  ),
               body: Center(
                 child: buildOnSuccess(context, viewModel),
               ),
