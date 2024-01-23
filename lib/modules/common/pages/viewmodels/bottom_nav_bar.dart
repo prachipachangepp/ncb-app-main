@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:ncb/modules/common/pages/testament_page.dart';
 import 'package:share_plus/share_plus.dart';
-
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../bookmark.dart';
 
 class CustomNavBar extends StatelessWidget {
+  //final BuildContext context;
   int currenTIndex = 0;
 
   List<Widget> screens = [
-    // HomeScreen(),
-    // BookmarkScreen(),
-    // ShareScreen(),
     TestamentPage(),
     BookMarkPage(),
-    // _shareContent('share your app');
-    // shareApp,
   ];
+  //CustomNavBar({required this.context});
   // CustomNavBar({required this.currenTIndex, required this.screens});
 
   @override
@@ -27,7 +24,7 @@ class CustomNavBar extends StatelessWidget {
       items: [
         BottomNavigationBarItem(
           icon: InkWell(
-            child: Icon(Icons.home),
+            child: const FaIcon(FontAwesomeIcons.cross),
             onTap: () {
               _onItemTapped(0);
             },
@@ -61,6 +58,23 @@ class CustomNavBar extends StatelessWidget {
     currenTIndex = index;
     // });
   }
+  // void _onItemTapped(int index) {
+  //   // Navigate to the selected screen based on index
+  //   if (index == 0) {
+  //     Navigator.push(context,
+  //       MaterialPageRoute(
+  //         builder: (context) => screens[index],
+  //       ),
+  //     );
+  //   } else if (index == 1) {
+  //     Navigator.push(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (context) => screens[index],
+  //       ),
+  //     );
+  //   }
+  // }
 
   void _shareContent(String content) {
     Share.share(content, subject: 'Sharing');

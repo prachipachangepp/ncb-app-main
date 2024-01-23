@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyAadV4laLU4aa-UE_f_VjXiIbq6V_2u0zM</string>
+	<key>GCM_SENDER_ID</key>
+	<string>609978247834</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>in.wi.ncb</string>
+	<key>PROJECT_ID</key>
+	<string>ncb-firebase-a9050</string>
+	<key>STORAGE_BUCKET</key>
+	<string>ncb-firebase-a9050.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:609978247834:ios:839a38ae7063a5c4840d23</string>
+	<key>DATABASE_URL</key>
+	<string>https://ncb-firebase-a9050-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>

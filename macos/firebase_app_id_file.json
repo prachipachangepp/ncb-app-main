@@ -1,7 +1,7 @@
 {
   "file_generated_by": "FlutterFire CLI",
   "purpose": "FirebaseAppID & ProjectID for this Firebase app in this directory",
-  "GOOGLE_APP_ID": "1:136540643262:ios:654f921aac49e21833e3ef",
-  "FIREBASE_PROJECT_ID": "new-community-bible",
-  "GCM_SENDER_ID": "136540643262"
+  "GOOGLE_APP_ID": "1:609978247834:ios:839a38ae7063a5c4840d23",
+  "FIREBASE_PROJECT_ID": "ncb-firebase-a9050",
+  "GCM_SENDER_ID": "609978247834"
 }
