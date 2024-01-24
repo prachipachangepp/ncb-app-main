@@ -85,6 +85,15 @@ class ChapterContentState extends State<ChapterContent> {
     var hasAudio = widget.chapter.audio?.isNotEmpty == true;
 
     return Scaffold(
+      bottomNavigationBar: CustomNavBar(
+        index: 0,
+        bottomBarCallBack: (int id) {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage(page: id)),
+              (route) => false);
+        },
+      ),
       appBar: AppBar(
         title: Text("${widget.book.name.titleCase}: ${widget.chapter.name}"),
         actions: HomePageState.buildAppBarActions()
@@ -100,14 +109,6 @@ class ChapterContentState extends State<ChapterContent> {
           ),
       ),
       // bottomNavigationBar: hasAudio ? buildAudioPlayer() : null,
-      bottomNavigationBar: CustomNavBar(
-          // currentIndex: _currentIndex,
-          // onTap: (index) {
-          //   setState(() {
-          //     _currentIndex = index;
-          //   });
-          // },
-          ),
       body: ScrollablePositionedList.builder(
         itemScrollController: itemScrollController,
         itemCount: verses.length + 2,
@@ -152,6 +153,7 @@ class ChapterContentState extends State<ChapterContent> {
                       footnotes: vers.footnotes,
                       commentaries: vers.commentaries,
                       chapter: widget.chapter,
+                      chapterId: vers.chapterId,
                     ));
                     widget.bookmarckChangedCallBack(Verselocal(
                         save: true,
@@ -159,7 +161,8 @@ class ChapterContentState extends State<ChapterContent> {
                         verse: vers.verse,
                         order: vers.order,
                         chapter: widget.chapter,
-                        id: vers.id));
+                        id: vers.id,
+                        chapterId: vers.chapterId));
                     setState(() {
                       verses[index - 1].save = true;
                     });
@@ -186,7 +189,8 @@ class ChapterContentState extends State<ChapterContent> {
                         verse: vers.verse,
                         chapter: widget.chapter,
                         order: vers.order,
-                        id: vers.id));
+                        id: vers.id,
+                        chapterId: vers.chapterId));
 
                     setState(() {
                       verses[index - 1].save = false;
@@ -469,7 +473,7 @@ class VerseRow extends StatelessWidget {
                       if (verse.footnotes!.isNotEmpty)
                         WidgetSpan(
                           child: FootnoteButton(
-                            footnote: verse.footnotes![0],
+                            footnote: verse.footnotes!.last,
                             verse: verse,
                           ),
                         ),

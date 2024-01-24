@@ -1,32 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:ncb/modules/common/pages/testament_page.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import '../bookmark.dart';
 
-class CustomNavBar extends StatelessWidget {
+typedef void BottomBarCallBack(int id);
+
+class CustomNavBar extends StatefulWidget {
+  final int index;
+  final BottomBarCallBack bottomBarCallBack;
+  const CustomNavBar(
+      {super.key, required this.index, required this.bottomBarCallBack});
+  @override
+  State<CustomNavBar> createState() => _CustomNavBarState();
+}
+
+class _CustomNavBarState extends State<CustomNavBar> {
   //final BuildContext context;
-  int currenTIndex = 0;
+  late int currenTIndex;
 
   List<Widget> screens = [
     TestamentPage(),
     BookMarkPage(),
   ];
-  //CustomNavBar({required this.context});
-  // CustomNavBar({required this.currenTIndex, required this.screens});
 
   @override
+  void initState() {
+    currenTIndex = widget.index;
+    print("init index : " + currenTIndex.toString());
+    // TODO: implement initState
+    super.initState();
+  }
+
+  //CustomNavBar({required this.context});
+  @override
   Widget build(BuildContext context) {
+    print("Current index : " + currenTIndex.toString());
     return BottomNavigationBar(
-      backgroundColor: Colors.grey[500],
+      backgroundColor: Colors.white,
       currentIndex: currenTIndex,
-      onTap: _onItemTapped,
+      onTap: (int i) {
+        _onItemTapped(i, context);
+      },
       items: [
         BottomNavigationBarItem(
           icon: InkWell(
-            child: const FaIcon(FontAwesomeIcons.cross),
+            child: const FaIcon(FontAwesomeIcons.bible),
             onTap: () {
-              _onItemTapped(0);
+              _onItemTapped(0, context);
+              setState(() {
+                currenTIndex = 0;
+              });
             },
           ),
           label: 'NCB',
@@ -35,7 +60,10 @@ class CustomNavBar extends StatelessWidget {
           icon: InkWell(
             child: Icon(Icons.bookmark),
             onTap: () {
-              _onItemTapped(1);
+              _onItemTapped(1, context);
+              setState(() {
+                currenTIndex = 1;
+              });
             },
           ),
           label: 'Bookmark',
@@ -44,6 +72,9 @@ class CustomNavBar extends StatelessWidget {
           icon: InkWell(
             child: Icon(Icons.share),
             onTap: () {
+              setState(() {
+                currenTIndex = 2;
+              });
               _shareContent('share your app');
             },
           ),
@@ -53,29 +84,18 @@ class CustomNavBar extends StatelessWidget {
     );
   }
 
-  void _onItemTapped(int index) {
+  void _onItemTapped(int index, BuildContext context) {
     // setState(() {
     currenTIndex = index;
+    if (index == 0) {
+      widget.bottomBarCallBack(5);
+    } else if (index == 1) {
+      widget.bottomBarCallBack(2);
+    } else {}
     // });
   }
-  // void _onItemTapped(int index) {
-  //   // Navigate to the selected screen based on index
-  //   if (index == 0) {
-  //     Navigator.push(context,
-  //       MaterialPageRoute(
-  //         builder: (context) => screens[index],
-  //       ),
-  //     );
-  //   } else if (index == 1) {
-  //     Navigator.push(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (context) => screens[index],
-  //       ),
-  //     );
-  //   }
-  // }
 
+  // void _onItemTapped(int index) {
   void _shareContent(String content) {
     Share.share(content, subject: 'Sharing');
   }

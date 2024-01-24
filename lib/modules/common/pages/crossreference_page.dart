@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:hive/hive.dart';
+import 'package:ncb/chapter_local.dart';
 import 'package:ncb/footnoteslocal.dart';
 import 'package:ncb/modules/common/models/chapter.dart';
 import 'package:ncb/modules/common/models/verse.dart';
@@ -11,6 +12,7 @@ import '../../../book_local.dart';
 class FootnotePage extends StatelessWidget {
   final FootnotesLocal footnote;
   Box<Verselocal> verseBox = Hive.box<Verselocal>('verseBox');
+  Box<ChapterLocal> chapterBox = Hive.box<ChapterLocal>('chaptersBox');
   Box<BookLocal> booksBox = Hive.box<BookLocal>('booksBox');
 
   final Verselocal verse;
@@ -27,18 +29,22 @@ class FootnotePage extends StatelessWidget {
     for (var a in verseBox.values) {
       for (var foot in a.footnotes!) {
         if (foot.id == id) {
+          ChapterLocal c = chapterBox.values
+              .where((chapter) => chapter.id == a.chapterId)
+              .toList()
+              .first;
           local.add(Verse(
               id: a.id,
               verseNo: a.verseNo,
               verse: a.verse,
               order: a.order,
               chapter: Chapter(
-                  id: a.chapter!.id,
-                  audio: a.chapter!.audio,
-                  displayPosition: a.chapter!.displayPosition,
-                  bookId: a.chapter!.bookId,
-                  name: a.chapter!.name),
-              chapterId: a.chapter!.id));
+                  id: c.id,
+                  audio: c.audio,
+                  displayPosition: c.displayPosition,
+                  bookId: c.bookId,
+                  name: c.name),
+              chapterId: a.chapterId!));
         }
       }
     }

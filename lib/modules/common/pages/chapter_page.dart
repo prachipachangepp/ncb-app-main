@@ -81,25 +81,18 @@ class ChapterPageState extends State<ChapterPage> {
   }
 
   void fetchData() {
-    print("gett book");
-    print("book id ${widget.bookId}");
     bookLocal = booksBox.values
         .where((element) => element.id == widget.bookId)
         .toList()
         .first;
     if (bookLocal != null) {
-      for (var c in bookLocal!.chapters!) {
-        print(c.id);
-      }
-      print("Chapter id");
-      print(widget.chapterId);
       chapter = bookLocal!.chapters!
           .where((c) => c.name == widget.chapterId)
           .toList()
           .first;
       //print("comparing verse with " + chapter!.id.toString());
       List<Verselocal> verses =
-          verseBox.values.where((el) => el.chapter!.id == chapter!.id).toList();
+          verseBox.values.where((el) => el.chapterId == chapter!.id).toList();
       // print(verses[0].verse);
       chapter = ChapterLocal(
           id: chapter!.id,

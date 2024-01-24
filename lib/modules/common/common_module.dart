@@ -31,7 +31,9 @@ class CommonModule extends Module {
   @override
   Map<String, RouteWidgetBuilder> routes() {
     return {
-      "/": (args) => const HomePage(),
+      "/": (args) => const HomePage(
+            page: 5,
+          ),
       "/search": (args) => const SearchView(),
       "/book/:bookId": (args) => BookPage(
             bookId: int.parse(args['bookId']![0]),

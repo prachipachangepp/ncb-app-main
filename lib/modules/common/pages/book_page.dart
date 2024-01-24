@@ -93,6 +93,7 @@ class BookPage extends StatelessWidget with Page<AppState, BookPageVM> {
                   (e) => FootnotesLocal(id: e.id, title: e.title, verses: []),
                 )
                 .toList(),
+            chapterId: verse.chapterId,
           ),
         );
       }
@@ -101,7 +102,6 @@ class BookPage extends StatelessWidget with Page<AppState, BookPageVM> {
 
   @override
   Widget buildContent(BuildContext context, BookPageVM viewModel) {
-    int _currentIndex = 0;
     return FutureBuilder(
       builder: (context, snap) {
         if (snap.hasData) {
@@ -118,18 +118,20 @@ class BookPage extends StatelessWidget with Page<AppState, BookPageVM> {
           }
           if (bookLocal != null) {
             return Scaffold(
+              bottomNavigationBar: CustomNavBar(
+                index: 0,
+                bottomBarCallBack: (int id) {
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => HomePage(page: id)),
+                      (route) => false);
+                },
+              ),
               appBar: AppBar(
                 title: Text(bookLocal!.name ?? ""),
                 actions: HomePageState.buildAppBarActions(),
               ),
-              bottomNavigationBar: CustomNavBar(
-                  // currentIndex: _currentIndex,
-                  // onTap: (index) {
-                  //   // setState(() {
-                  //   _currentIndex = index;
-                  //   // });
-                  // },
-                  ),
               body: Center(
                 child: buildOnSuccess(context, viewModel),
               ),
@@ -149,7 +151,7 @@ class BookPage extends StatelessWidget with Page<AppState, BookPageVM> {
   BookPageVM initViewModel() => BookPageVM(bookId);
 
   Widget buildOnSuccess(BuildContext context, BookPageVM vm) {
-    syncDataToOffline();
+    //syncDataToOffline();
     //var chapters = vm.chapters;
     if (bookLocal == null) {
       return const Text('Could not load chapters');

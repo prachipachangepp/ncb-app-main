@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:day_night_switcher/day_night_switcher.dart';
+import 'package:dio/dio.dart';
 import 'package:flrx/flrx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Page;
@@ -18,6 +19,7 @@ import 'package:ncb/modules/common/pages/lexicon_page.dart';
 import 'package:ncb/modules/common/pages/search_page.dart';
 import 'package:ncb/modules/common/pages/static_page.dart';
 import 'package:ncb/modules/common/pages/testament_page.dart';
+import 'package:ncb/modules/common/pages/viewmodels/bottom_nav_bar.dart';
 import 'package:ncb/static_content_local.dart';
 import 'package:ncb/store/states/app_state.dart';
 import 'package:share_plus/share_plus.dart';
@@ -25,6 +27,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../book_local.dart';
 import '../../../chapter_local.dart';
 import '../../../commentary_local.dart';
+import '../../../config/app_config.dart';
 import '../../../footnoteslocal.dart';
 import '../../../store/actions/actions.dart';
 import '../../../testament_local.dart';
@@ -37,8 +40,8 @@ import '../service/messaging_services.dart';
 import '../service/testament_service.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
-
+  const HomePage({Key? key, required this.page}) : super(key: key);
+  final int page;
   @override
   HomePageState createState() => HomePageState();
 }
@@ -63,11 +66,10 @@ class _LoadingScreenState extends State<LoadingScreen> {
     const oneSec = Duration(seconds: 1);
     Timer.periodic(oneSec, (Timer t) {
       setState(() {
-        print(_progressValue);
         // we "finish" downloading here
-        if (_progressValue <= 1.20) {
+        if (_progressValue <= 1.0) {
           // _loading = false;
-          _progressValue += 0.01;
+          _progressValue += 0.015;
           _opacityValue -= 0.005;
         } else {
           widget.loadingScreenCallBack(false);
@@ -112,17 +114,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                             fontSize: 15),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text(
-                        "These are the bible files which allows you to have a seamless performance even if your devices have no active internet connection",
-                        style: TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: Colors.white,
-                            fontSize: 10),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(
@@ -247,11 +238,12 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
 class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
-  var page = 5;
+  var page = 0;
   bool showSearchView = false;
   String query = "";
   Box<Verselocal> verseBox = Hive.box<Verselocal>('verseBox');
   Box<Verselocal> bookmarkBox = Hive.box<Verselocal>('bookmarks');
+  Box<ChapterLocal> chapterBox = Hive.box<ChapterLocal>('chaptersBox');
   Box<TestamentLocal> testamentBox = Hive.box<TestamentLocal>('testamentBox');
   Box<StaticContentLocal> staticContentBox =
       Hive.box<StaticContentLocal>('staticContentBox');
@@ -262,7 +254,6 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
   bool connection = false;
   bool requested = false;
   final _messagingServiced = MessagingService();
-  int _currentIndex = 0;
 
   Stream<bool> checkConnectivity() async* {
     while (!connection) {
@@ -369,84 +360,87 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
   }
 
   Future<void> createVersesBox() async {
+    try {
+      var dio = Dio();
+      var response = await dio.request(
+        '${AppConfig.apiUrl}get-chapters',
+        options: Options(
+          method: 'GET',
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        for (var chap in response.data['data']) {
+          Chapter chapter = Chapter.fromJson(chap);
+          ChapterLocal chapterLocal = ChapterLocal(
+              id: chapter.id,
+              audio: chapter.audio,
+              displayPosition: chapter.displayPosition,
+              bookId: chapter.bookId,
+              name: chapter.name,
+              verses: [],
+              book: null);
+          chapterBox.put(chapter.id.toString(), chapterLocal);
+        }
+      } else {
+        print(response.statusMessage);
+      }
+    } catch (e) {
+      print(e);
+    }
     for (var element in testamentBox.values) {
       for (var book in element.books) {
-        List<Chapter> c = [];
-        try {
-          print("adding " + book.name);
-          c = await Future.delayed(const Duration(milliseconds: 100),
-              () => makeChapterRequest(book.id));
-        } catch (e) {
-          print("falid to add book " + book.name.toString());
-        }
-        if (c.isNotEmpty) {
-          List<ChapterLocal> localChapters = [];
-          String audio = '';
-          for (var e in c) {
-            audio = e.audio!;
-            localChapters.add(ChapterLocal(
-              id: e.id,
-              audio: e.audio,
-              displayPosition: e.displayPosition,
-              bookId: e.bookId,
-              name: e.name,
-              verses: [],
-              book: null,
-            ));
-            //print("Chapter added " + e.name);
-          }
-          booksBox.put(
-            book.id.toString(),
-            BookLocal(
-                id: book.id,
-                name: book.name,
-                displayPosition: book.displayPosition,
-                testamentId: book.testamentId,
-                introduction: book.introduction,
-                chapters: localChapters),
-          );
-          localChapters.forEach((element) async {
-            List<Verse> v =
-                await Future.delayed(const Duration(milliseconds: 500))
-                    .then((value) {
-              return FetchVersesAction(element.id).buildFuture();
-            });
-            for (var verse in v) {
-              int l = bookmarkBox.values
-                  .where((ver) => ver.verse == verse.verse)
-                  .toList()
-                  .length;
-              verseBox.put(
-                verse.id,
-                Verselocal(
-                  save: l > 0 ? true : false,
-                  verseNo: verse.verseNo,
-                  verse: verse.verse,
-                  order: verse.order,
-                  commentaries: verse.commentaries!
-                      .map((com) => CommentaryLocal(
-                          id: com.id, title: com.title, content: com.content))
-                      .toList(),
-                  id: verse.id,
-                  chapter: ChapterLocal(
-                      id: element.id,
-                      audio: element.audio,
-                      displayPosition: element.displayPosition,
-                      bookId: book.id,
-                      name: element.name,
-                      verses: [],
-                      book: null),
-                  footnotes: verse.footnotes!
-                      .map(
-                        (e) => FootnotesLocal(
-                            id: e.id, title: e.title, verses: []),
-                      )
-                      .toList(),
-                ),
-              );
-            }
-          });
-        }
+        print("adding " + book.name);
+
+        List<ChapterLocal> localChapters = [];
+        localChapters = chapterBox.values
+            .where((chapters) => chapters.bookId == book.id)
+            .toList();
+        String audio = '';
+        booksBox.put(
+          book.id.toString(),
+          BookLocal(
+              id: book.id,
+              name: book.name,
+              displayPosition: book.displayPosition,
+              testamentId: book.testamentId,
+              introduction: book.introduction,
+              chapters: localChapters),
+        );
+        // localChapters.forEach((element) async {
+        //   List<Verse> v =
+        //       await Future.delayed(const Duration(milliseconds: 500))
+        //           .then((value) {
+        //     return FetchVersesAction(element.id).buildFuture();
+        //   });
+        //   for (var verse in v) {
+        //     int l = bookmarkBox.values
+        //         .where((ver) => ver.verse == verse.verse)
+        //         .toList()
+        //         .length;
+        //     verseBox.put(
+        //       verse.id,
+        //       Verselocal(
+        //         save: l > 0 ? true : false,
+        //         verseNo: verse.verseNo,
+        //         verse: verse.verse,
+        //         order: verse.order,
+        //         commentaries: verse.commentaries!
+        //             .map((com) => CommentaryLocal(
+        //                 id: com.id, title: com.title, content: com.content))
+        //             .toList(),
+        //         id: verse.id,
+        //         footnotes: verse.footnotes!
+        //             .map(
+        //               (e) => FootnotesLocal(
+        //                   id: e.id, title: e.title, verses: []),
+        //             )
+        //             .toList(),
+        //         chapterId: verse.chapterId,
+        //       ),
+        //     );
+        //   }
+        // });
       }
     }
   }
@@ -454,6 +448,7 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
   Future<void> syncDataToOffline() async {
     await syncTestamentsToOffline();
     await createVersesBox();
+    await getVerses();
     await createLexicon();
     await createContent();
   }
@@ -470,25 +465,94 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
 
   @override
   void initState() {
-    //syncDataToOffline();
+    page = widget.page;
+    _messagingServiced.init(context);
     // TODO: implement initState
     super.initState();
-    _messagingServiced.init(context);
   }
 
+  Future<void> getVerses() async {
+    String? url = '${AppConfig.apiUrl}get-verses';
+    var dio = Dio();
+    int count = 0;
+    while (url != null) {
+      await Future.delayed(Duration(milliseconds: 300));
+      var response = await dio.request(
+        url,
+        options: Options(
+          method: 'GET',
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        url = response.data['data']['next_page_url'].toString();
+        if (url == "null") {
+          url = null;
+        }
+        for (var a in response.data['data']['data']) {
+          // print(a);
+          Verse verse = Verse.fromJson(a);
+          verse.commentaries ?? [];
+          int l = bookmarkBox.values
+              .where((ver) => ver.verse == verse.verse)
+              .toList()
+              .length;
+          // BookLocal bookLocal = booksBox.values.where((book) => book.chapters.w )
+          verseBox.put(
+            verse.id,
+            Verselocal(
+              save: l > 0 ? true : false,
+              verseNo: verse.verseNo,
+              verse: verse.verse,
+              order: verse.order,
+              commentaries: verse.commentaries != null
+                  ? verse.commentaries!
+                      .map((com) => CommentaryLocal(
+                          id: com.id, title: com.title, content: com.content))
+                      .toList()
+                  : [],
+              id: verse.id,
+              footnotes: verse.footnotes!
+                  .map(
+                    (e) => FootnotesLocal(id: e.id, title: e.title, verses: []),
+                  )
+                  .toList(),
+              chapterId: verse.chapterId,
+            ),
+          );
+          // print(verse.chapter!.name);
+          //print(verse.chapterId);
+          count++;
+        }
+      } else {
+        print(response.statusMessage);
+      }
+
+      print(count);
+    }
+  }
+
+  int index = 0;
   @override
   Widget buildContent(BuildContext context, AppVM viewModel) {
+    if (page == 2) {
+      index = 1;
+      print("on bookmark");
+      print(index);
+    } else {
+      index = 0;
+    }
     return Scaffold(
+      bottomNavigationBar: CustomNavBar(
+        index: index,
+        bottomBarCallBack: (int id) {
+          setState(() {
+            page = id;
+          });
+        },
+      ),
       key: scaffoldKey,
       drawer: buildDrawer(),
-      // bottomNavigationBar: CustomBottomNavigationBar(
-      //   currentIndex: _currentIndex,
-      //   onTap: (index) {
-      //     setState(() {
-      //       _currentIndex = index;
-      //     });
-      //   },
-      // ),
       body: StreamBuilder<bool>(
         stream: checkConnectivity(),
         builder: (context, snapshot) {
@@ -496,12 +560,12 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
             connection = snapshot.data!;
             if (connection) {
               if (!requested) {
-                syncDataToOffline();
                 if (dbBox.values.length > 0) {
                   loading = false;
                   connection = true;
                 } else {
                   loading = true;
+                  syncDataToOffline();
                   createRecord();
                 }
                 requested = true;

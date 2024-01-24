@@ -79,7 +79,8 @@ class BookMarkPageState extends State<BookMarkPage> {
                   verseNo: verse.verseNo,
                   verse: verse.verse,
                   order: verse.order,
-                  id: verse.id))),
+                  id: verse.id,
+                  chapterId: verse.chapterId))),
       if (verse.commentaries!.isNotEmpty)
         WidgetSpan(
           child: CommentaryButton(
@@ -122,6 +123,7 @@ class BookMarkPageState extends State<BookMarkPage> {
                       name: verse.chapter!.name,
                       verses: [],
                       book: null),
+                  chapterId: verse.chapterId,
                 ));
                 print(bookmarkBox.length);
                 print("added");
@@ -204,12 +206,14 @@ class _BookmarkRowState extends State<BookmarkRow> {
             // IconButton(onPressed: () {}, icon: Icon(Icons.share)),
             IconButton(
                 onPressed: () {
-                 // widget.unbook(true);
+                  // widget.unbook(true);
                   showDialog(
                     context: context,
-                    builder: (_) =>  UnbookPopUp(unbook: (bool value) {
-                      widget.unbook(true);
-                    },),
+                    builder: (_) => UnbookPopUp(
+                      unbook: (bool value) {
+                        widget.unbook(true);
+                      },
+                    ),
                   );
                 },
                 icon: Icon(Icons.delete)),

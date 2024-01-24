@@ -23,6 +23,8 @@ class Verselocal {
   List<CommentaryLocal>? commentaries;
   @HiveField(8)
   ChapterLocal? chapter;
+  @HiveField(9)
+  int? chapterId;
   // @HiveField(6)
   //final List<Commentary>? commentaries;
   // @HiveField(7)
@@ -32,6 +34,7 @@ class Verselocal {
       {this.footnotes,
       this.commentaries,
       this.chapter,
+      required this.chapterId,
       required this.save,
       required this.verseNo,
       required this.verse,
