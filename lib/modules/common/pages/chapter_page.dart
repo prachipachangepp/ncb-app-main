@@ -118,7 +118,7 @@ class ChapterPageState extends State<ChapterPage> {
     }
 
     /// verses should be loaded by child ideally
-
+    print(chapter!.displayPosition.toString());
     return ChapterContent(
       chapter: chapter!,
       book: bookLocal!,

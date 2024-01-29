@@ -164,7 +164,8 @@ class BookPage extends StatelessWidget with Page<AppState, BookPageVM> {
         crossAxisCount;
     var cellHeight = 60;
     var aspectRatio = width / cellHeight;
-
+    bookLocal!.chapters!
+        .sort(((a, b) => a.displayPosition.compareTo(b.displayPosition)));
     return GridView.count(
       crossAxisCount: crossAxisCount,
       childAspectRatio: aspectRatio,
@@ -187,7 +188,7 @@ class BookPage extends StatelessWidget with Page<AppState, BookPageVM> {
     var routeName = '/book/$bookId/chapter/${e.name}';
     var cellName = e.name;
 
-    //print(e.verses);
+    print(e.displayPosition);
 
     return buildCell(context, routeName, cellName);
   }

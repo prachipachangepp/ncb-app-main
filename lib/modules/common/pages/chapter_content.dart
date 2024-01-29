@@ -124,7 +124,7 @@ class ChapterContentState extends State<ChapterContent> {
 
           if (index < verses.length + 1) {
             var vers = verses[index - 1];
-            print(vers);
+            // print(vers.order);
             vers.chapter = ChapterLocal(
                 id: chapter!.id,
                 audio: chapter!.audio,

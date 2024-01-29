@@ -10,8 +10,8 @@ class AppConfig extends ApplicationConfig {
   //   "API_URL",
   // );
 
-  //static const apiUrl = "https://admin.newcommunitybible.in/api/";
-  static const apiUrl = "https://ncb.xceedtech.in/api/";
+  static const apiUrl = "https://admin.newcommunitybible.in/api/";
+  //static const apiUrl = "https://ncb.xceedtech.in/api/";
   //static const apiUrl = "https://ncb.xceedtech.in/api/";
   static const List<String> _supportedLocales = <String>[
     "en",

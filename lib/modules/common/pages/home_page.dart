@@ -20,6 +20,7 @@ import 'package:ncb/modules/common/pages/search_page.dart';
 import 'package:ncb/modules/common/pages/static_page.dart';
 import 'package:ncb/modules/common/pages/testament_page.dart';
 import 'package:ncb/modules/common/pages/viewmodels/bottom_nav_bar.dart';
+import 'package:ncb/newdb.dart';
 import 'package:ncb/static_content_local.dart';
 import 'package:ncb/store/states/app_state.dart';
 import 'package:share_plus/share_plus.dart';
@@ -69,7 +70,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
         // we "finish" downloading here
         if (_progressValue <= 1.0) {
           // _loading = false;
-          _progressValue += 0.015;
+          _progressValue += 0.05;
           _opacityValue -= 0.005;
         } else {
           widget.loadingScreenCallBack(false);
@@ -250,6 +251,7 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
   Box<LexiconLocal> lexiconBox = Hive.box<LexiconLocal>('lexiconBox');
   Box<BookLocal> booksBox = Hive.box<BookLocal>('booksBox');
   Box<DBConfig> dbBox = Hive.box<DBConfig>('dbConfig');
+  Box<NewDB> newdbBox = Hive.box<NewDB>('newDB');
   bool loading = true;
   bool connection = false;
   bool requested = false;
@@ -446,6 +448,7 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
   }
 
   Future<void> syncDataToOffline() async {
+    print("Syncing data");
     await syncTestamentsToOffline();
     await createVersesBox();
     await getVerses();
@@ -561,8 +564,19 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
             if (connection) {
               if (!requested) {
                 if (dbBox.values.length > 0) {
-                  loading = false;
-                  connection = true;
+                  if (newdbBox.values.length <= 0) {
+                    loading = true;
+                    syncDataToOffline();
+                    createRecord();
+                    //print("Ahhhh");
+                    newdbBox.add(NewDB(created: true));
+                  } else {
+                    loading = false;
+                    connection = true;
+                    // print("New df");
+                    print(newdbBox.length);
+                    print(newdbBox.length);
+                  }
                 } else {
                   loading = true;
                   syncDataToOffline();

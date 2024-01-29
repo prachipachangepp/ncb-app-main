@@ -1,5 +1,4 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flrx/components/error_manager/error_manager.dart';
 import 'package:flrx/flrx.dart';
 import 'package:flutter/material.dart';
@@ -15,13 +14,13 @@ import 'package:ncb/dbconfig.dart';
 import 'package:ncb/firebase_options.dart';
 import 'package:ncb/footnoteslocal.dart';
 import 'package:ncb/lexicon_local.dart';
+import 'package:ncb/newdb.dart';
 import 'package:ncb/static_content_local.dart';
 import 'package:ncb/store/states/app_state.dart';
 import 'package:ncb/store/store_retriever.dart';
 import 'package:ncb/testament_local.dart';
 import 'package:ncb/verselocal.dart';
 import 'package:redux/redux.dart';
-
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,12 +39,14 @@ Future<void> main() async {
   Hive.registerAdapter(CommentaryLocalAdapter());
   Hive.registerAdapter(DBConfigAdapter());
   Hive.registerAdapter(LexiconLocalAdapter());
+  Hive.registerAdapter(NewDBAdapter());
   Hive.registerAdapter(StaticContentLocalAdapter());
   await Hive.openBox<Verselocal>('bookmarks');
   await Hive.openBox<Verselocal>('verseBox');
   await Hive.openBox<TestamentLocal>('testamentBox');
   await Hive.openBox<ChapterLocal>('chaptersBox');
   await Hive.openBox<BookLocal>('booksBox');
+  await Hive.openBox<NewDB>('newDB');
   await Hive.openBox<DBConfig>('dbConfig');
   await Hive.openBox<LexiconLocal>('lexiconBox');
   await Hive.openBox<StaticContentLocal>('staticContentBox');
