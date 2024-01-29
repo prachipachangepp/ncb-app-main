@@ -21,11 +21,13 @@ import 'package:ncb/store/store_retriever.dart';
 import 'package:ncb/testament_local.dart';
 import 'package:ncb/verselocal.dart';
 import 'package:redux/redux.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'modules/common/service/messaging_services.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  final _messagingServiced = MessagingService();
   // await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
   //   alert: true,
   //   badge: true,

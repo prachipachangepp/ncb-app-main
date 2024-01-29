@@ -579,9 +579,7 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
                     // print("New df");
                   }
                 } else {
-                  loading = true;
-                  syncDataToOffline();
-                  createRecord();
+                  loading = false;
                 }
                 requested = true;
               }
