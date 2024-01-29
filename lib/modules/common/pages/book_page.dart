@@ -35,7 +35,7 @@ class BookPage extends StatelessWidget with Page<AppState, BookPageVM> {
   Future<bool> checkConnectivity() async {
     final connectivityResult = await (Connectivity().checkConnectivity());
 
-    print(connectivityResult.name);
+    // print(connectivityResult.name);
 
     if (connectivityResult == ConnectivityResult.mobile) {
       return true;
@@ -188,7 +188,7 @@ class BookPage extends StatelessWidget with Page<AppState, BookPageVM> {
     var routeName = '/book/$bookId/chapter/${e.name}';
     var cellName = e.name;
 
-    print(e.displayPosition);
+    // print(e.displayPosition);
 
     return buildCell(context, routeName, cellName);
   }
