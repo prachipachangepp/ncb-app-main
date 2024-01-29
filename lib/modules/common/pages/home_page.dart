@@ -110,7 +110,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
                         height: 10,
                       ),
                       const Text(
-                        "Please wait ,downloading resources",
+                      "“I waited patiently for the Lord; he inclined to me and heard my cry.”",
+                        //"Please wait ,downloading resources",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
