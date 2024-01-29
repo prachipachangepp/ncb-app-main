@@ -1,6 +1,8 @@
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class MessagingService {
@@ -13,6 +15,7 @@ class MessagingService {
   MessagingService._internal();
 
   final FirebaseMessaging _fcm = FirebaseMessaging.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> init(BuildContext context) async {
     /// permission for notifications
@@ -31,6 +34,10 @@ class MessagingService {
     /// Retrieving the FCM token
     fcmToken = await _fcm.getToken();
     log('fcmToken: $fcmToken');
+
+    ///storing token
+  //  await _storeFCMToken(fcmToken);
+    await saveFCMTokenToFirestore();
 
     // Handling background messages using the specified handler
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -60,6 +67,8 @@ class MessagingService {
                     if (notificationData.containsKey('screen'))
                       TextButton(
                         onPressed: () {
+                         // _storeFCMToken(fcmToken);
+                          //saveFCMTokenToFirestore();
                           Navigator.pop(context);
                           Navigator.of(context).pushNamed(screen);
                         },
@@ -102,6 +111,33 @@ class MessagingService {
     }
   }
 }
+
+
+///Storing FCM token in Firestore
+Future<void> saveFCMTokenToFirestore() async {
+ // final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseMessaging messaging = FirebaseMessaging.instance;
+    final String? fcmToken = await messaging.getToken();
+
+    // Save the FCM token to Firestore
+    if (fcmToken != null) {
+      await FirestoreHelper.saveFCMToken(fcmToken);
+      print('FCM Token saved to Firestore: $fcmToken');
+    } else {
+      print('Failed to retrieve FCM Token');
+    }
+  }
+
+class FirestoreHelper {
+  static Future<void> saveFCMToken(String fcmToken) async {
+    final CollectionReference tokens = FirebaseFirestore.instance.collection('tokens');
+
+    await tokens.add({
+      'token': fcmToken,
+    });
+  }
+}
+
 
 /// Handler for background messages
 @pragma('vm:entry-point')

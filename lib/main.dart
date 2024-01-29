@@ -21,6 +21,7 @@ import 'package:ncb/store/store_retriever.dart';
 import 'package:ncb/testament_local.dart';
 import 'package:ncb/verselocal.dart';
 import 'package:redux/redux.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
