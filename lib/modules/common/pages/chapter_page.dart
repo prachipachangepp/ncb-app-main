@@ -45,7 +45,7 @@ class ChapterPageState extends State<ChapterPage> {
   Future<bool> checkConnectivity() async {
     final connectivityResult = await (Connectivity().checkConnectivity());
 
-    print(connectivityResult.name);
+    //print(connectivityResult.name);
 
     if (connectivityResult == ConnectivityResult.mobile) {
       return true;
@@ -118,14 +118,14 @@ class ChapterPageState extends State<ChapterPage> {
     }
 
     /// verses should be loaded by child ideally
-    print(chapter!.displayPosition.toString());
+    // print(chapter!.displayPosition.toString());
     return ChapterContent(
       chapter: chapter!,
       book: bookLocal!,
       currentAudio: currentAudio,
       onAudioChanged: (value) => setState(() => currentAudio = value),
       bookmarckChangedCallBack: (Verselocal verselocal) {
-        print("Chnaged status for id ${verselocal.id} to ${verselocal.save}");
+        // print("Chnaged status for id ${verselocal.id} to ${verselocal.save}");
       },
     );
   }

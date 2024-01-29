@@ -476,6 +476,7 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
 
   Future<void> getVerses() async {
     String? url = '${AppConfig.apiUrl}get-verses';
+    // print(url);
     var dio = Dio();
     int count = 0;
     while (url != null) {
@@ -495,6 +496,7 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
         for (var a in response.data['data']['data']) {
           // print(a);
           Verse verse = Verse.fromJson(a);
+
           verse.commentaries ?? [];
           int l = bookmarkBox.values
               .where((ver) => ver.verse == verse.verse)
@@ -508,11 +510,13 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
               verseNo: verse.verseNo,
               verse: verse.verse,
               order: verse.order,
-              commentaries: verse.commentaries != null
-                  ? verse.commentaries!
-                      .map((com) => CommentaryLocal(
-                          id: com.id, title: com.title, content: com.content))
-                      .toList()
+              commentaries: a["commentary_content"] != null
+                  ? [
+                      CommentaryLocal(
+                          title: a["commentary_title"].toString(),
+                          content: a["commentary_content"].toString(),
+                          id: 0)
+                    ]
                   : [],
               id: verse.id,
               footnotes: verse.footnotes!
@@ -523,7 +527,7 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
               chapterId: verse.chapterId,
             ),
           );
-          // print(verse.chapter!.name);
+          // print(a["commentary_content"]);
           //print(verse.chapterId);
           count++;
         }
@@ -540,8 +544,8 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
   Widget buildContent(BuildContext context, AppVM viewModel) {
     if (page == 2) {
       index = 1;
-      print("on bookmark");
-      print(index);
+      // print("on bookmark");
+      //print(index);
     } else {
       index = 0;
     }
@@ -568,14 +572,11 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
                     loading = true;
                     syncDataToOffline();
                     createRecord();
-                    //print("Ahhhh");
                     newdbBox.add(NewDB(created: true));
                   } else {
                     loading = false;
                     connection = true;
                     // print("New df");
-                    print(newdbBox.length);
-                    print(newdbBox.length);
                   }
                 } else {
                   loading = true;
@@ -585,11 +586,11 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
                 requested = true;
               }
             } else {
-              print("offline mode");
+              // print("offline mode");
               if (dbBox.values.length == 0) {
                 loading = true;
               } else {
-                print("d");
+                //  print("d");
                 loading = false;
               }
               loading = false;

@@ -28,7 +28,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
   @override
   void initState() {
     currenTIndex = widget.index;
-    print("init index : " + currenTIndex.toString());
+    // print("init index : " + currenTIndex.toString());
     // TODO: implement initState
     super.initState();
   }
@@ -36,48 +36,27 @@ class _CustomNavBarState extends State<CustomNavBar> {
   //CustomNavBar({required this.context});
   @override
   Widget build(BuildContext context) {
-    print("Current index : " + currenTIndex.toString());
+    //print("Current index : " + currenTIndex.toString());
     return BottomNavigationBar(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).canvasColor,
       currentIndex: currenTIndex,
       onTap: (int i) {
         _onItemTapped(i, context);
+        setState(() {
+          currenTIndex = i;
+        });
       },
       items: [
         BottomNavigationBarItem(
-          icon: InkWell(
-            child: const FaIcon(FontAwesomeIcons.bible),
-            onTap: () {
-              _onItemTapped(0, context);
-              setState(() {
-                currenTIndex = 0;
-              });
-            },
-          ),
+          icon: const FaIcon(FontAwesomeIcons.bible),
           label: 'NCB',
         ),
         BottomNavigationBarItem(
-          icon: InkWell(
-            child: Icon(Icons.bookmark),
-            onTap: () {
-              _onItemTapped(1, context);
-              setState(() {
-                currenTIndex = 1;
-              });
-            },
-          ),
+          icon: Icon(Icons.bookmark),
           label: 'Bookmark',
         ),
         BottomNavigationBarItem(
-          icon: InkWell(
-            child: Icon(Icons.share),
-            onTap: () {
-              setState(() {
-                currenTIndex = 2;
-              });
-              _shareContent('share your app');
-            },
-          ),
+          icon: Icon(Icons.share),
           label: 'Share',
         ),
       ],
@@ -91,7 +70,10 @@ class _CustomNavBarState extends State<CustomNavBar> {
       widget.bottomBarCallBack(5);
     } else if (index == 1) {
       widget.bottomBarCallBack(2);
-    } else {}
+    } else if (index == 2) {
+      _shareContent(
+          "https://play.google.com/store/apps/details?id=in.wi.ncb&hl=en_IN&gl=US");
+    }
     // });
   }
 
