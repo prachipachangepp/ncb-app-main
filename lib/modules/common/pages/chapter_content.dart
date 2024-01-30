@@ -28,6 +28,7 @@ typedef void BookmarckChangedCallBack(Verselocal verselocal);
 class ChapterContent extends StatefulWidget {
   final BookLocal book;
   final ChapterLocal chapter;
+  String query = "";
   final BookmarckChangedCallBack bookmarckChangedCallBack;
   final String? currentAudio;
   final ValueSetter<String?> onAudioChanged;
@@ -102,6 +103,8 @@ class ChapterContentState extends State<ChapterContent> {
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () {
+
+
             },
           ),
         ]+  HomePageState.buildAppBarActions()
