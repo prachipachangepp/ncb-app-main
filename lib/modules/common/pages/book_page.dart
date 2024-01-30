@@ -128,9 +128,20 @@ class BookPage extends StatelessWidget with Page<AppState, BookPageVM> {
                       (route) => false);
                 },
               ),
+              ///
+              ///
               appBar: AppBar(
                 title: Text(bookLocal!.name ?? ""),
-                actions: HomePageState.buildAppBarActions(),
+                actions:
+                //HomePageState.buildAppBarActions(),
+                <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () {
+                    },
+                  ),
+                ]+ HomePageState.buildAppBarActions(),
+
               ),
               body: Center(
                 child: buildOnSuccess(context, viewModel),
@@ -211,4 +222,6 @@ class BookPage extends StatelessWidget with Page<AppState, BookPageVM> {
       ),
     );
   }
+
+
 }

@@ -700,6 +700,7 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
                 vm.toggleDarkMode();
               },
             ),
+            //IconButton(onPressed: (){}, icon: Icon(Icons.search)),
             PopupMenuButton(
               icon: const Icon(Icons.text_rotation_none),
               itemBuilder: (BuildContext context) {

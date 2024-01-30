@@ -21,7 +21,7 @@ class UnbookPopUp extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Do you really want to remove\nfrom bookmark?',
+                    'Do you want to remove\nfrom bookmark?',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.red,

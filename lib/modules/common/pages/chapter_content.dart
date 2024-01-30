@@ -94,9 +94,17 @@ class ChapterContentState extends State<ChapterContent> {
               (route) => false);
         },
       ),
+      ///
+      /// ///
       appBar: AppBar(
         title: Text("${widget.book.name.titleCase}: ${widget.chapter.name}"),
-        actions: HomePageState.buildAppBarActions()
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+            },
+          ),
+        ]+  HomePageState.buildAppBarActions()
           ..insert(
             0,
             Container(
@@ -518,4 +526,5 @@ class VerseRow extends StatelessWidget {
       ),
     );
   }
+
 }
