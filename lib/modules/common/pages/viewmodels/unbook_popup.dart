@@ -48,7 +48,7 @@ class UnbookPopUp extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.w300,
                         fontSize: 14,
-                        color: Colors.black,
+                        color: Colors.grey,
                       ),
                     ),
                   ),
