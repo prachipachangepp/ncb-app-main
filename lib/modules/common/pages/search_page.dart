@@ -2,10 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:laravel_orion/laravel_orion.dart';
 import 'package:ncb/modules/common/models/verse.dart';
 import 'package:ncb/modules/common/pages/chapter_content.dart';
-import 'package:ncb/modules/common/repositories/verse_repository.dart';
 import 'package:ncb/verselocal.dart';
 import 'package:recase/recase.dart';
 
@@ -30,13 +28,13 @@ class _SearchViewState extends State<SearchView> {
   void initState() {
     super.initState();
 
-    if (widget.query.isNotEmpty) {
-      results = search(OrionSearchQueryBuilder()..withKeyword(widget.query));
-    }
+    // if (widget.query.isNotEmpty) {
+    //   results = search(OrionSearchQueryBuilder()..withKeyword(widget.query));
+    // }
   }
 
-  static Future<List<Verse>> search(OrionSearchQueryBuilder builder) =>
-      VerseRepository.instance.search(builder.build());
+  // static Future<List<Verse>> search(OrionSearchQueryBuilder builder) =>
+  //     VerseRepository.instance.search(builder.build());
 
   Future<List<Verselocal>> vocalforlocal() async {
     print("query ===" + widget.query);
@@ -88,6 +86,7 @@ class _SearchViewState extends State<SearchView> {
             }
 
             var verse = verseList[position - 1];
+
             var chapter = verse.chapter;
             var book = chapter?.book;
 
@@ -96,7 +95,7 @@ class _SearchViewState extends State<SearchView> {
                   ? null
                   : () => Navigator.pushNamed(
                         context,
-                        '/book/${book!.id}/chapter/${chapter.id}',
+                        '/book/${book!.id}/chapter/${chapter.name}',
                       ),
               child: Container(
                 color: position % 2 == 0
@@ -110,13 +109,17 @@ class _SearchViewState extends State<SearchView> {
                   children: [
                     if (book != null && chapter != null)
                       Text(
-                        "${book.name.titleCase} ${chapter.displayPosition}",
-                        style: Theme.of(context).textTheme.subtitle1,
+                        "${book.name.titleCase} : ${chapter.displayPosition}",
+                        style: Theme.of(context)
+                            .textTheme
+                            .subtitle1!
+                            .copyWith(fontWeight: FontWeight.bold),
                       ),
                     VerseRow(
                       verse: verse,
                       callBackBookmark: (bool value) {},
                       bookMark: verse.save,
+                      search: true,
                     ),
                   ],
                 ),

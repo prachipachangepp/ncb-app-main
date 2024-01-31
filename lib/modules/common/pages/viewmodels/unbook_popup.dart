@@ -10,23 +10,25 @@ class UnbookPopUp extends StatelessWidget {
     return Dialog(
       child: Container(
         height: 200,
-        width: 300,
+        width: MediaQuery.of(context).size.width - 10,
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ///txt
               const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Do you really want to remove\nfrom bookmark?',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
+                  Expanded(
+                    child: Text(
+                      'Do you want to remove this verse from bookmarks ?',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
                     ),
                   ),
                 ],
@@ -44,7 +46,7 @@ class UnbookPopUp extends StatelessWidget {
                       Navigator.pop(context);
                     },
                     child: const Text(
-                      "Cancle",
+                      "Cancel",
                       style: TextStyle(
                         fontWeight: FontWeight.w300,
                         fontSize: 14,
@@ -64,7 +66,7 @@ class UnbookPopUp extends StatelessWidget {
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(horizontal: 30),
-                        backgroundColor: Colors.grey,
+                        backgroundColor: Theme.of(context).primaryColor,
                       ),
                       child: const Text(
                         'Yes',
