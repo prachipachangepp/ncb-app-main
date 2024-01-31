@@ -1,11 +1,13 @@
 import 'dart:math';
-
+import 'package:day_night_switcher/day_night_switcher.dart';
 import 'package:flrx/flrx.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:ncb/book_local.dart';
 import 'package:ncb/chapter_local.dart';
 import 'package:ncb/modules/common/models/chapter.dart';
@@ -13,11 +15,11 @@ import 'package:ncb/modules/common/models/verse.dart';
 import 'package:ncb/modules/common/pages/home_page.dart';
 import 'package:ncb/modules/common/pages/viewmodels/bottom_nav_bar.dart';
 import 'package:ncb/modules/common/widgets/footnote_button.dart';
-import 'package:ncb/modules/common/widgets/share_chapter_button.dart';
 import 'package:recase/recase.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:sorted/sorted.dart';
-
+import '../../../app.dart';
+import '../../../store/states/app_state.dart';
 import '../../../verselocal.dart';
 import '../widgets/commentary_button.dart';
 import '../widgets/ncb_button_small.dart';
@@ -47,13 +49,14 @@ class ChapterContent extends StatefulWidget {
 }
 
 class ChapterContentState extends State<ChapterContent> {
+  bool showSearchView = false;
+  String query = "";
   AudioPlayer get player => Application.get<AudioPlayer>();
   final ItemScrollController itemScrollController = ItemScrollController();
   Box<Verselocal> bookmarkBox = Hive.box<Verselocal>('bookmarks');
   List<Verselocal> verses = [];
   List<Verselocal> versl = [];
   bool first = true;
-  int _currentIndex = 0;
   @override
   void initState() {
     // TODO: implement initState
@@ -95,30 +98,34 @@ class ChapterContentState extends State<ChapterContent> {
               (route) => false);
         },
       ),
-      ///
-      /// ///
-      appBar: AppBar(
-        title: Text("${widget.book.name.titleCase}: ${widget.chapter.name}"),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-
-
-            },
-          ),
-        ]+  HomePageState.buildAppBarActions()
-          ..insert(
-            0,
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 10),
-              child: ShareChapterButton(
-                chapter: chapter!,
-                bookName: widget.book.name.titleCase,
-              ),
-            ),
-          ),
+      ///code changed
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(50),
+        child: buildAppBar(),
       ),
+
+      // AppBar(
+      //   title: Text("${widget.book.name.titleCase}: ${widget.chapter.name}"),
+      //   actions: <Widget>[
+      //     IconButton(
+      //       icon: Icon(Icons.search),
+      //       onPressed: () {
+      //
+      //
+      //       },
+      //     ),
+      //   ]+  HomePageState.buildAppBarActions()
+      //     ..insert(
+      //       0,
+      //       Container(
+      //         margin: EdgeInsets.symmetric(horizontal: 10),
+      //         child: ShareChapterButton(
+      //           chapter: chapter!,
+      //           bookName: widget.book.name.titleCase,
+      //         ),
+      //       ),
+      //     ),
+      // ),
       // bottomNavigationBar: hasAudio ? buildAudioPlayer() : null,
       body: ScrollablePositionedList.builder(
         itemScrollController: itemScrollController,
@@ -418,6 +425,107 @@ class ChapterContentState extends State<ChapterContent> {
 
     player.play();
   }
+
+  FloatingSearchAppBar buildAppBar() {
+    var theme = Theme.of(context);
+    var appBarColor = theme.brightness == Brightness.dark
+        ? theme.colorScheme.surface
+        : theme.primaryColor;
+    var textStyle = const TextStyle(color: Colors.white);
+
+    return FloatingSearchAppBar(
+      color: appBarColor,
+      colorOnScroll: appBarColor,
+      iconColor: theme.primaryIconTheme.color,
+      elevation: 0,
+      liftOnScrollElevation: 0,
+      hintStyle: textStyle,
+      titleStyle: textStyle,
+      title: Text("${widget.book.name.titleCase}: ${widget.chapter.name}", style: textStyle),
+       onQueryChanged: (q) => setState(() => query = q),
+       onSubmitted: (q) => setState(() => query = q),
+       debounceDelay: const Duration(milliseconds: 500),
+       onFocusChanged: (hasFocus) => setState(() => showSearchView = hasFocus),
+      actions: [
+        FloatingSearchBarAction.searchToClear(
+          color: theme.primaryIconTheme.color,
+        ),
+        if (!showSearchView) ...buildAppBarActions(),
+      ],
+      body: Container(color: Colors.redAccent,),
+    );
+  }
+
+  static List<Widget> buildAppBarActions() {
+    return [
+      StoreConnector<AppState, AppVM>(
+        converter: (store) => AppVM()..init(store),
+        builder: (context, vm) => Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            DayNightSwitcherIcon(
+              isDarkModeEnabled: vm.darkMode,
+              dayBackgroundColor: Theme.of(context).primaryColor,
+              onStateChanged: (_) {
+                if (_ == vm.darkMode) return;
+                vm.toggleDarkMode();
+              },
+            ),
+            PopupMenuButton(
+              icon: const Icon(Icons.text_rotation_none),
+              itemBuilder: (BuildContext context) {
+                return [
+                  PopupMenuItem(
+                    value: 100,
+                    child: buildChangeTextSize(vm, context),
+                  ),
+                ];
+              },
+            ),
+          ],
+        ),
+      ),
+    ];
+  }
+
+  static Row buildChangeTextSize(AppVM vm, BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        IconButton(
+          onPressed: vm.decreaseTextSize,
+          icon: const Text('-'),
+        ),
+        const Text('A'),
+        IconButton(
+          onPressed: vm.increaseTextSize,
+          icon: const Text('+'),
+        ),
+      ],
+    );
+  }
+  // Widget buildBody() {
+  //   return IndexedStack(
+  //     index: showSearchView ? 0 : 1,
+  //     children: [
+  //       SearchView(
+  //         key: Key(query.toString()),
+  //         query: query,
+  //       ),
+  //       [
+  //         StaticPage(url: 'preface'),
+  //         StaticPage(url: 'presentation'),
+  //         BookMarkPage(),
+  //         StaticPage(url: 'introduction'),
+  //         StaticPage(url: 'collaborator'),
+  //         TestamentPage(),
+  //         LexiconPage(),
+  //         StaticPage(url: 'contact-us'),
+  //         StaticPage(url: 'copyright'),
+  //       ][page],
+  //     ],
+  //   );
+  // }
 }
 
 typedef void CallBackBookmark(bool value);
