@@ -177,8 +177,6 @@ class ChapterContentState extends State<ChapterContent> {
                     setState(() {
                       verses[index - 1].save = true;
                     });
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Added to bookmark")));
                   } else {
                     int jkf = 0;
                     int k = 0;
@@ -190,8 +188,6 @@ class ChapterContentState extends State<ChapterContent> {
                       jkf++;
                     }
                     bookmarkBox.deleteAt(k);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("removed from bookmark")));
                     // print(bookmarkBox.length);
                     // print("removed");
                     widget.bookmarckChangedCallBack(Verselocal(
@@ -209,6 +205,7 @@ class ChapterContentState extends State<ChapterContent> {
                   }
                 },
                 bookMark: verses[index - 1].save,
+                search: false,
               ),
             );
           }
@@ -427,13 +424,15 @@ typedef void CallBackBookmark(bool value);
 
 class VerseRow extends StatelessWidget {
   final Verselocal verse;
+  final bool search;
   final bool bookMark;
   final CallBackBookmark callBackBookmark;
   const VerseRow(
       {Key? key,
       required this.verse,
       required this.callBackBookmark,
-      required this.bookMark})
+      required this.bookMark,
+      required this.search})
       : super(key: key);
 
   @override
@@ -461,65 +460,67 @@ class VerseRow extends StatelessWidget {
                         .textTheme
                         .bodyText2
                         ?.copyWith(height: 1.8),
-                    children: [
-                      WidgetSpan(child: ShareVerseButton(verse: verse)),
-                      if (verse.commentaries!.isNotEmpty)
-                        WidgetSpan(
-                          child: CommentaryButton(
-                            commentary: verse.commentaries![0],
-                          ),
-                        ),
+                    children: search
+                        ? []
+                        : [
+                            WidgetSpan(child: ShareVerseButton(verse: verse)),
+                            if (verse.commentaries!.isNotEmpty)
+                              WidgetSpan(
+                                child: CommentaryButton(
+                                  commentary: verse.commentaries![0],
+                                ),
+                              ),
 
-                      ///footnotebutton multiple
-                      // ...verse.footnotes?.map(
-                      //       (footnote) => WidgetSpan(
-                      //         child: FootnoteButton(
-                      //           footnote: footnote,
-                      //           verse: verse,
-                      //         ),
-                      //       ),
-                      //     ) ??
-                      //     List.empty(),
-                      /// footnotebutton single
-                      if (verse.footnotes!.isNotEmpty)
-                        WidgetSpan(
-                          child: FootnoteButton(
-                            footnote: verse.footnotes!.last,
-                            verse: verse,
-                          ),
-                        ),
+                            ///footnotebutton multiple
+                            // ...verse.footnotes?.map(
+                            //       (footnote) => WidgetSpan(
+                            //         child: FootnoteButton(
+                            //           footnote: footnote,
+                            //           verse: verse,
+                            //         ),
+                            //       ),
+                            //     ) ??
+                            //     List.empty(),
+                            /// footnotebutton single
+                            if (verse.footnotes!.isNotEmpty)
+                              WidgetSpan(
+                                child: FootnoteButton(
+                                  footnote: verse.footnotes!.last,
+                                  verse: verse,
+                                ),
+                              ),
 
-                      ///footnotebutton
-                      // ...?verse.footnotes!.isNotEmpty
-                      //     ? [
-                      //         WidgetSpan(
-                      //           child: FootnoteButton(
-                      //             footnote: verse.footnotes![0],
-                      //             verse: verse,
-                      //           ),
-                      //         ),
-                      //       ]
-                      //     : [],
-                      WidgetSpan(
-                        child: Container(
-                          margin: const EdgeInsets.all(2),
-                          child: NcbButtonSmall(
-                            onTap: () async {
-                              callBackBookmark(!bookMark);
-                            },
-                            child: bookMark
-                                ? const Icon(
-                                    Icons.bookmark,
-                                    size: 22,
-                                  )
-                                : const Icon(
-                                    Icons.bookmark_outline_rounded,
-                                    size: 22,
-                                  ),
-                          ),
-                        ),
-                      ),
-                    ],
+                            ///footnotebutton
+                            // ...?verse.footnotes!.isNotEmpty
+                            //     ? [
+                            //         WidgetSpan(
+                            //           child: FootnoteButton(
+                            //             footnote: verse.footnotes![0],
+                            //             verse: verse,
+                            //           ),
+                            //         ),
+                            //       ]
+                            //     : [],
+                            WidgetSpan(
+                              child: Container(
+                                margin: const EdgeInsets.all(2),
+                                child: NcbButtonSmall(
+                                  onTap: () async {
+                                    callBackBookmark(!bookMark);
+                                  },
+                                  child: bookMark
+                                      ? const Icon(
+                                          Icons.bookmark,
+                                          size: 22,
+                                        )
+                                      : const Icon(
+                                          Icons.bookmark_outline_rounded,
+                                          size: 22,
+                                        ),
+                                ),
+                              ),
+                            ),
+                          ],
                   ),
                 ),
               ],

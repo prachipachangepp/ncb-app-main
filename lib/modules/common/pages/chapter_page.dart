@@ -29,8 +29,10 @@ class ChapterPageState extends State<ChapterPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   Box<BookLocal> booksBox = Hive.box<BookLocal>('booksBox');
   Box<Verselocal> verseBox = Hive.box<Verselocal>('verseBox');
+  Box<ChapterLocal> chapterBox = Hive.box<ChapterLocal>('chaptersBox');
 
   String? currentAudio;
+  bool loading = false;
 
   ChapterLocal? chapter;
   BookLocal? bookLocal;
@@ -85,7 +87,16 @@ class ChapterPageState extends State<ChapterPage> {
         .where((element) => element.id == widget.bookId)
         .toList()
         .first;
+    // chapter
+    // List list= chapterBox.values
+    //      .where((chapters) => chapters.bookId == bookLocal!.id)
+    //      .toList();
+    // list
+
     if (bookLocal != null) {
+      // chapter = chapterBox.values
+      //     .where((element) => element.id == widget.chapterId)
+      //     .first;
       chapter = bookLocal!.chapters!
           .where((c) => c.name == widget.chapterId)
           .toList()
@@ -132,22 +143,15 @@ class ChapterPageState extends State<ChapterPage> {
 
   PreferredSizeWidget? buildAppBar(
     BuildContext context,
-    ChapterPageVM viewModel,
+    bool loading,
   ) {
-    return viewModel.loadingState.maybeWhen(
-      orElse: () => AppBar(),
-      success: () => viewModel.verseLoadingState.maybeWhen(
-        orElse: () => AppBar(),
-        success: () => null,
-      ),
-    );
+    return AppBar();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      // appBar: buildAppBar(context, viewModel),
       body: buildOnSuccess(context),
     );
   }
