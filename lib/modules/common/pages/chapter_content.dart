@@ -23,6 +23,7 @@ import '../../../store/states/app_state.dart';
 import '../../../verselocal.dart';
 import '../widgets/commentary_button.dart';
 import '../widgets/ncb_button_small.dart';
+import '../widgets/share_chapter_button.dart';
 import '../widgets/share_verse_button.dart';
 
 typedef void BookmarckChangedCallBack(Verselocal verselocal);
@@ -447,6 +448,10 @@ class ChapterContentState extends State<ChapterContent> {
        debounceDelay: const Duration(milliseconds: 500),
        onFocusChanged: (hasFocus) => setState(() => showSearchView = hasFocus),
       actions: [
+        ShareChapterButton(
+          chapter: chapter!,
+          bookName: widget.book.name.titleCase,
+        ),
         FloatingSearchBarAction.searchToClear(
           color: theme.primaryIconTheme.color,
         ),

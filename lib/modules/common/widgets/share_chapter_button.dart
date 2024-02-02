@@ -20,6 +20,7 @@ class ShareChapterButton extends StatelessWidget {
         onTap: shareChapter,
         child: const Icon(
           Icons.share,
+          color: Colors.white,
           size: 25,
         ),
       ),
