@@ -1,19 +1,14 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:day_night_switcher/day_night_switcher.dart';
-import 'package:flrx/pages/page.dart';
 import 'package:flutter/material.dart' hide Page;
-import 'package:flutter_redux/flutter_redux.dart';
 import 'package:hive/hive.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:ncb/book_local.dart';
 import 'package:ncb/chapter_local.dart';
 import 'package:ncb/modules/common/pages/home_page.dart';
-import 'package:ncb/modules/common/pages/viewmodels/book_page_vm.dart';
+import 'package:ncb/modules/common/pages/search_page.dart';
 import 'package:ncb/modules/common/pages/viewmodels/bottom_nav_bar.dart';
-import 'package:ncb/store/states/app_state.dart';
 import 'package:ncb/verselocal.dart';
 
-import '../../../app.dart';
 import '../../../commentary_local.dart';
 import '../../../footnoteslocal.dart';
 import '../../../store/actions/actions.dart';
@@ -241,7 +236,6 @@ import '../models/verse.dart';
 //
 // }
 //
-
 
 ///old stateless widget
 // class BookPage extends StatelessWidget with Page<AppState, BookPageVM> {
@@ -480,6 +474,19 @@ class _BookPageState extends State<BookPage> {
     bookmarkBox = Hive.box<Verselocal>('bookmarks');
   }
 
+  Widget buildBody() {
+    return IndexedStack(
+      index: showSearchView ? 0 : 1,
+      children: [
+        SearchView(
+          key: Key(query.toString()),
+          query: query,
+        ),
+        buildOnSuccess(context, widget.bookId),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -505,20 +512,18 @@ class _BookPageState extends State<BookPage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => HomePage(page: id)),
-                          (route) => false);
+                      (route) => false);
                 },
               ),
               appBar: PreferredSize(
-                preferredSize: const Size.fromHeight(50),
+                preferredSize: Size(double.maxFinite, 50),
                 child: buildAppBar(),
               ),
               // appBar: AppBar(
               //   title: Text(bookLocal!.name ?? ""),
               //   actions: buildAppBarActions(),
               // ),
-              body: Center(
-                child: buildOnSuccess(context, widget.bookId),
-              ),
+              body: buildBody(),
             );
           } else {
             return Scaffold();
@@ -534,10 +539,11 @@ class _BookPageState extends State<BookPage> {
   List<Widget> buildAppBarActions() {
     return HomePageState.buildAppBarActions();
   }
-  Future<void> syncDataToOffline() async  {
+
+  Future<void> syncDataToOffline() async {
     bookLocal!.chapters!.forEach((element) async {
       List<Verse> v =
-      await Future.delayed(Duration(milliseconds: 500)).then((value) {
+          await Future.delayed(Duration(milliseconds: 500)).then((value) {
         return FetchVersesAction(element.id).buildFuture();
       });
       for (var verse in v) {
@@ -554,7 +560,7 @@ class _BookPageState extends State<BookPage> {
             order: verse.order,
             commentaries: verse.commentaries!
                 .map((com) => CommentaryLocal(
-                id: com.id, title: com.title, content: com.content))
+                    id: com.id, title: com.title, content: com.content))
                 .toList(),
             id: verse.id,
             chapter: ChapterLocal(
@@ -568,7 +574,7 @@ class _BookPageState extends State<BookPage> {
             footnotes: verse.footnotes!
                 .map(
                   (e) => FootnotesLocal(id: e.id, title: e.title, verses: []),
-            )
+                )
                 .toList(),
             chapterId: verse.chapterId,
           ),
@@ -621,22 +627,21 @@ class _BookPageState extends State<BookPage> {
       childAspectRatio: aspectRatio,
       crossAxisSpacing: crossAxisSpacing.toDouble(),
       mainAxisSpacing: crossAxisSpacing.toDouble(),
-      children: bookLocal!.chapters!
-          .map((e) => buildChapterCell(context, e))
-          .toList()
-        ..insert(
-          0,
-          buildCell(
-            context,
-            '/book/$bookId/intro',
-            'Introduction',
-          ),
-        ),
+      children:
+          bookLocal!.chapters!.map((e) => buildChapterCell(context, e)).toList()
+            ..insert(
+              0,
+              buildCell(
+                context,
+                '/book/$bookId/intro',
+                'Introduction',
+              ),
+            ),
     );
   }
 
   Widget buildChapterCell(BuildContext context, ChapterLocal e) {
-    var routeName = '/book/$widget.bookId/chapter/${e.name}';
+    var routeName = '/book/${widget.bookId}/chapter/${e.name}';
     var cellName = e.name;
 
     return buildCell(context, routeName, cellName);
@@ -657,7 +662,7 @@ class _BookPageState extends State<BookPage> {
     );
   }
 
-  buildAppBar() {
+  FloatingSearchAppBar buildAppBar() {
     var theme = Theme.of(context);
     var appBarColor = theme.brightness == Brightness.dark
         ? theme.colorScheme.surface
@@ -669,6 +674,7 @@ class _BookPageState extends State<BookPage> {
       colorOnScroll: appBarColor,
       iconColor: theme.primaryIconTheme.color,
       elevation: 0,
+      brightness: theme.brightness,
       liftOnScrollElevation: 0,
       hintStyle: textStyle,
       titleStyle: textStyle,
@@ -679,13 +685,12 @@ class _BookPageState extends State<BookPage> {
       debounceDelay: const Duration(milliseconds: 500),
       onFocusChanged: (hasFocus) => setState(() => showSearchView = hasFocus),
       actions: [
-
         FloatingSearchBarAction.searchToClear(
           color: theme.primaryIconTheme.color,
         ),
         if (!showSearchView) ...buildAppBarActions(),
       ],
-      body: Container(color: Colors.redAccent,),
+      body: Container(),
     );
   }
 }

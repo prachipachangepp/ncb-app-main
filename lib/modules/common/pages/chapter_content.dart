@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:day_night_switcher/day_night_switcher.dart';
 import 'package:flrx/flrx.dart';
 import 'package:flutter/material.dart';
@@ -13,11 +14,13 @@ import 'package:ncb/chapter_local.dart';
 import 'package:ncb/modules/common/models/chapter.dart';
 import 'package:ncb/modules/common/models/verse.dart';
 import 'package:ncb/modules/common/pages/home_page.dart';
+import 'package:ncb/modules/common/pages/search_page.dart';
 import 'package:ncb/modules/common/pages/viewmodels/bottom_nav_bar.dart';
 import 'package:ncb/modules/common/widgets/footnote_button.dart';
 import 'package:recase/recase.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:sorted/sorted.dart';
+
 import '../../../app.dart';
 import '../../../store/states/app_state.dart';
 import '../../../verselocal.dart';
@@ -58,6 +61,7 @@ class ChapterContentState extends State<ChapterContent> {
   List<Verselocal> verses = [];
   List<Verselocal> versl = [];
   bool first = true;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -76,6 +80,21 @@ class ChapterContentState extends State<ChapterContent> {
                 order: e.order,
                 chapterId: widget.chapter.id))
             .toList());
+  }
+
+  Widget buildBody() {
+    return Container(
+      height: double.maxFinite,
+      child: IndexedStack(
+        index: showSearchView ? 0 : 1,
+        children: [
+          SearchView(
+            key: Key(query.toString()),
+            query: query,
+          ),
+        ],
+      ),
+    );
   }
 
   Chapter? chapter;
@@ -99,6 +118,7 @@ class ChapterContentState extends State<ChapterContent> {
               (route) => false);
         },
       ),
+
       ///code changed
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
@@ -128,99 +148,104 @@ class ChapterContentState extends State<ChapterContent> {
       //     ),
       // ),
       // bottomNavigationBar: hasAudio ? buildAudioPlayer() : null,
-      body: ScrollablePositionedList.builder(
-        itemScrollController: itemScrollController,
-        itemCount: verses.length + 2,
-        padding: EdgeInsets.zero,
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return buildQuickJump(chapter!);
-          }
+      body: showSearchView
+          ? SearchView(
+              key: Key(query.toString()),
+              query: query,
+            )
+          : ScrollablePositionedList.builder(
+              itemScrollController: itemScrollController,
+              itemCount: verses.length + 2,
+              padding: EdgeInsets.zero,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return buildQuickJump(chapter!);
+                }
 
-          if (index == verses.length + 1) {
-            return buildNavigateChapters();
-          }
+                if (index == verses.length + 1) {
+                  return buildNavigateChapters();
+                }
 
-          if (index < verses.length + 1) {
-            var vers = verses[index - 1];
-            // print(vers.order);
-            vers.chapter = ChapterLocal(
-                id: chapter!.id,
-                audio: chapter!.audio,
-                displayPosition: chapter!.displayPosition,
-                bookId: chapter!.bookId,
-                name: chapter!.name,
-                verses: [],
-                book: widget.book);
-            return Container(
-              color: index % 2 == 0
-                  ? Theme.of(context).brightness == Brightness.dark
-                      ? Colors.grey[800]
-                      : Colors.grey[300]
-                  : null,
-              padding: const EdgeInsets.all(16),
-              child: VerseRow(
-                verse: vers,
-                callBackBookmark: (bool value) async {
-                  if (!vers.save) {
-                    bookmarkBox.add(Verselocal(
-                      verseNo: vers.verseNo,
-                      verse: vers.verse,
-                      order: vers.order,
-                      id: vers.id,
-                      save: vers.save,
-                      footnotes: vers.footnotes,
-                      commentaries: vers.commentaries,
-                      chapter: widget.chapter,
-                      chapterId: vers.chapterId,
-                    ));
-                    widget.bookmarckChangedCallBack(Verselocal(
-                        save: true,
-                        verseNo: vers.verseNo,
-                        verse: vers.verse,
-                        order: vers.order,
-                        chapter: widget.chapter,
-                        id: vers.id,
-                        chapterId: vers.chapterId));
-                    setState(() {
-                      verses[index - 1].save = true;
-                    });
-                  } else {
-                    int jkf = 0;
-                    int k = 0;
-                    for (var element in bookmarkBox.values) {
-                      if (element.verseNo ==
-                          widget.chapter.verses![index].verseNo) {
-                        k = jkf;
-                      }
-                      jkf++;
-                    }
-                    bookmarkBox.deleteAt(k);
-                    // print(bookmarkBox.length);
-                    // print("removed");
-                    widget.bookmarckChangedCallBack(Verselocal(
-                        save: false,
-                        verseNo: vers.verseNo,
-                        verse: vers.verse,
-                        chapter: widget.chapter,
-                        order: vers.order,
-                        id: vers.id,
-                        chapterId: vers.chapterId));
+                if (index < verses.length + 1) {
+                  var vers = verses[index - 1];
+                  // print(vers.order);
+                  vers.chapter = ChapterLocal(
+                      id: chapter!.id,
+                      audio: chapter!.audio,
+                      displayPosition: chapter!.displayPosition,
+                      bookId: chapter!.bookId,
+                      name: chapter!.name,
+                      verses: [],
+                      book: widget.book);
+                  return Container(
+                    color: index % 2 == 0
+                        ? Theme.of(context).brightness == Brightness.dark
+                            ? Colors.grey[800]
+                            : Colors.grey[300]
+                        : null,
+                    padding: const EdgeInsets.all(16),
+                    child: VerseRow(
+                      verse: vers,
+                      callBackBookmark: (bool value) async {
+                        if (!vers.save) {
+                          bookmarkBox.add(Verselocal(
+                            verseNo: vers.verseNo,
+                            verse: vers.verse,
+                            order: vers.order,
+                            id: vers.id,
+                            save: vers.save,
+                            footnotes: vers.footnotes,
+                            commentaries: vers.commentaries,
+                            chapter: widget.chapter,
+                            chapterId: vers.chapterId,
+                          ));
+                          widget.bookmarckChangedCallBack(Verselocal(
+                              save: true,
+                              verseNo: vers.verseNo,
+                              verse: vers.verse,
+                              order: vers.order,
+                              chapter: widget.chapter,
+                              id: vers.id,
+                              chapterId: vers.chapterId));
+                          setState(() {
+                            verses[index - 1].save = true;
+                          });
+                        } else {
+                          int jkf = 0;
+                          int k = 0;
+                          for (var element in bookmarkBox.values) {
+                            if (element.verseNo ==
+                                widget.chapter.verses![index].verseNo) {
+                              k = jkf;
+                            }
+                            jkf++;
+                          }
+                          bookmarkBox.deleteAt(k);
+                          // print(bookmarkBox.length);
+                          // print("removed");
+                          widget.bookmarckChangedCallBack(Verselocal(
+                              save: false,
+                              verseNo: vers.verseNo,
+                              verse: vers.verse,
+                              chapter: widget.chapter,
+                              order: vers.order,
+                              id: vers.id,
+                              chapterId: vers.chapterId));
 
-                    setState(() {
-                      verses[index - 1].save = false;
-                    });
-                  }
-                },
-                bookMark: verses[index - 1].save,
-                search: false,
-              ),
-            );
-          }
+                          setState(() {
+                            verses[index - 1].save = false;
+                          });
+                        }
+                      },
+                      bookMark: verses[index - 1].save,
+                      search: false,
+                    ),
+                  );
+                }
 
-          return const SizedBox();
-        },
-      ),
+                return const SizedBox();
+              },
+            ),
     );
   }
 
@@ -442,22 +467,24 @@ class ChapterContentState extends State<ChapterContent> {
       liftOnScrollElevation: 0,
       hintStyle: textStyle,
       titleStyle: textStyle,
-      title: Text("${widget.book.name.titleCase}: ${widget.chapter.name}", style: textStyle),
-       onQueryChanged: (q) => setState(() => query = q),
-       onSubmitted: (q) => setState(() => query = q),
-       debounceDelay: const Duration(milliseconds: 500),
-       onFocusChanged: (hasFocus) => setState(() => showSearchView = hasFocus),
+      //title: Text("${bookLocal?.name}: ${widget.chapter.name}", style: textStyle),
+      onQueryChanged: (q) => setState(() => query = q),
+      onSubmitted: (q) => setState(() => query = q),
+      debounceDelay: const Duration(milliseconds: 500),
+      onFocusChanged: (hasFocus) => setState(() => showSearchView = hasFocus),
+      title: Text("${widget.book.name.titleCase}: ${widget.chapter.name}",
+          style: textStyle),
       actions: [
+        FloatingSearchBarAction.searchToClear(
+          color: theme.primaryIconTheme.color,
+        ),
         ShareChapterButton(
           chapter: chapter!,
           bookName: widget.book.name.titleCase,
         ),
-        FloatingSearchBarAction.searchToClear(
-          color: theme.primaryIconTheme.color,
-        ),
         if (!showSearchView) ...buildAppBarActions(),
       ],
-      body: Container(color: Colors.redAccent,),
+      body: Container(),
     );
   }
 
@@ -643,5 +670,4 @@ class VerseRow extends StatelessWidget {
       ),
     );
   }
-
 }

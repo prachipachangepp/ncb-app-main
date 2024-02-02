@@ -83,6 +83,7 @@ class ChapterPageState extends State<ChapterPage> {
   }
 
   void fetchData() {
+    print(widget.bookId);
     bookLocal = booksBox.values
         .where((element) => element.id == widget.bookId)
         .toList()

@@ -27,6 +27,7 @@ class BookMarkPageState extends State<BookMarkPage> {
   AudioPlayer get player => Application.get<AudioPlayer>();
   final ItemScrollController itemScrollController = ItemScrollController();
   List<Verselocal> verses = [];
+  Box<Verselocal> verseBox = Hive.box<Verselocal>('verseBox');
   Box<Verselocal> bookmarkBox = Hive.box<Verselocal>('bookmarks');
   @override
   void initState() {
@@ -57,6 +58,10 @@ class BookMarkPageState extends State<BookMarkPage> {
                 unbook: (bool val) {
                   setState(() {
                     bookmarkBox.deleteAt(index);
+                    verseBox.values
+                        .where((element) => element.id == verses[index].id)
+                        .first
+                        .save = false;
                     verses = bookmarkBox.values.toList();
                   });
                 },
