@@ -387,6 +387,11 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
   @override
   AppVM initViewModel() => AppVM();
 
+  // @override
+  // AppVM initViewModel() {
+  //   return AppVM();
+  // }
+
   Future<void> shareApp() async {
     if (kIsWeb) {
       return Share.share(Uri.base.toString());
