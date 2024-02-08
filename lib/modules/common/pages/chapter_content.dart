@@ -8,6 +8,7 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:marquee/marquee.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:ncb/book_local.dart';
 import 'package:ncb/chapter_local.dart';
@@ -28,7 +29,6 @@ import '../widgets/commentary_button.dart';
 import '../widgets/ncb_button_small.dart';
 import '../widgets/share_chapter_button.dart';
 import '../widgets/share_verse_button.dart';
-import 'package:marquee/marquee.dart';
 
 typedef void BookmarckChangedCallBack(Verselocal verselocal);
 
@@ -515,13 +515,13 @@ class ChapterContentState extends State<ChapterContent> {
         width: 200,
         child: Marquee(
           text: "${widget.book.name.titleCase}: ${widget.chapter.name}",
-              style: textStyle,
-        scrollAxis: Axis.horizontal,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        blankSpace: 100,
-        velocity: 20,
-        pauseAfterRound: Duration(seconds: 2),
-        showFadingOnlyWhenScrolling: false,
+          style: textStyle,
+          scrollAxis: Axis.horizontal,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          blankSpace: 100,
+          velocity: 20,
+          pauseAfterRound: Duration(seconds: 2),
+          showFadingOnlyWhenScrolling: false,
           fadingEdgeStartFraction: 0.1,
           fadingEdgeEndFraction: 0.1,
           startPadding: 10.0,
@@ -652,15 +652,14 @@ class VerseRow extends StatelessWidget {
               Expanded(
                 child: Text.rich(
                   TextSpan(
-                    text: Bidi.stripHtmlIfNeeded(
-                      verse.verse,
-                    ).trim(),
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText2
-                        ?.copyWith(height: 1.8),
-                    children: []
-                  ),
+                      text: Bidi.stripHtmlIfNeeded(
+                        verse.verse,
+                      ).trim(),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText2
+                          ?.copyWith(height: 1.8),
+                      children: []),
                 ),
               ),
             ],
@@ -669,54 +668,56 @@ class VerseRow extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               ShareVerseButton(verse: verse),
-    if (verse.commentaries!.isNotEmpty)
-    CommentaryButton(commentary: verse.commentaries![0],),
+              if (verse.commentaries!.isNotEmpty)
+                CommentaryButton(
+                  commentary: verse.commentaries![0],
+                ),
 
-    ///footnotebutton multiple
-    // ...verse.footnotes?.map(
-    //       (footnote) => WidgetSpan(
-    //         child: FootnoteButton(
-    //           footnote: footnote,
-    //           verse: verse,
-    //         ),
-    //       ),
-    //     ) ??
-    //     List.empty(),
-    /// footnotebutton single
-    if (verse.footnotes!.isNotEmpty)
-    FootnoteButton(
-    footnote: verse.footnotes!.last,
-    verse: verse,
-    ),
+              ///footnotebutton multiple
+              // ...verse.footnotes?.map(
+              //       (footnote) => WidgetSpan(
+              //         child: FootnoteButton(
+              //           footnote: footnote,
+              //           verse: verse,
+              //         ),
+              //       ),
+              //     ) ??
+              //     List.empty(),
+              /// footnotebutton single
+              if (verse.footnotes!.isNotEmpty)
+                FootnoteButton(
+                  footnote: verse.footnotes!.last,
+                  verse: verse,
+                ),
 
-    ///footnotebutton
-    // ...?verse.footnotes!.isNotEmpty
-    //     ? [
-    //         WidgetSpan(
-    //           child: FootnoteButton(
-    //             footnote: verse.footnotes![0],
-    //             verse: verse,
-    //           ),
-    //         ),
-    //       ]
-    //     : [],
-    Container(
-    margin: const EdgeInsets.all(2),
-    child: NcbButtonSmall(
-    onTap: () async {
-    callBackBookmark(!bookMark);
-    },
-    child: bookMark
-    ? const Icon(
-    Icons.bookmark,
-    size: 22,
-    )
-        : const Icon(
-    Icons.bookmark_outline_rounded,
-    size: 22,
-    ),
-    ),
-    ),
+              ///footnotebutton
+              // ...?verse.footnotes!.isNotEmpty
+              //     ? [
+              //         WidgetSpan(
+              //           child: FootnoteButton(
+              //             footnote: verse.footnotes![0],
+              //             verse: verse,
+              //           ),
+              //         ),
+              //       ]
+              //     : [],
+              Container(
+                margin: const EdgeInsets.all(2),
+                child: NcbButtonSmall(
+                  onTap: () async {
+                    callBackBookmark(!bookMark);
+                  },
+                  child: bookMark
+                      ? const Icon(
+                          Icons.bookmark,
+                          size: 22,
+                        )
+                      : const Icon(
+                          Icons.bookmark_outline_rounded,
+                          size: 22,
+                        ),
+                ),
+              ),
             ],
           )
         ],
