@@ -75,6 +75,7 @@ dependencies:
   share: ^2.0.4
   font_awesome_flutter: ^10.6.0
   shared_preferences: ^2.2.2
+  marquee: ^2.2.3
 dependency_overrides:
   intl: any
   package_info_plus: any
