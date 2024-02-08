@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:ncb/chapter_local.dart';
 import 'package:ncb/modules/common/models/verse.dart';
 import 'package:ncb/modules/common/pages/chapter_content.dart';
 import 'package:ncb/verselocal.dart';
@@ -67,7 +68,7 @@ class _SearchViewState extends State<SearchView> {
         }
 
         if (snapshot.hasData) {
-          print(snapshot.data);
+          // print(snapshot.data);
         }
         var verseList = snapshot.data;
 
@@ -88,15 +89,35 @@ class _SearchViewState extends State<SearchView> {
             var verse = verseList[position - 1];
 
             var chapter = verse.chapter;
+            ChapterLocal chapterLocal = ChapterLocal(
+                id: verse.chapter!.id,
+                audio: verse.chapter!.audio,
+                displayPosition: verse.chapter!.displayPosition,
+                bookId: verse.chapter!.bookId,
+                name: verse.chapter!.name,
+                verses: [],
+                book: verse.chapter!.book);
             var book = chapter?.book;
 
             return InkWell(
               onTap: chapter == null
                   ? null
-                  : () => Navigator.pushNamed(
+                  : () {
+                      print(verse.verseNo);
+                      print(verse.verse);
+                      Navigator.push(
                         context,
-                        '/book/${book!.id}/chapter/${chapter.name}',
-                      ),
+                        MaterialPageRoute(
+                          builder: (context) => ChapterContent(
+                            chapter: verse.chapter!,
+                            book: book!,
+                            onAudioChanged: (s) {},
+                            bookmarckChangedCallBack: (g) {},
+                            versId: verse.verseNo,
+                          ),
+                        ),
+                      );
+                    },
               child: Container(
                 color: position % 2 == 0
                     ? Theme.of(context).brightness == Brightness.dark
