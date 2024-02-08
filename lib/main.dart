@@ -50,6 +50,7 @@ Future<void> main() async {
   await Hive.openBox<ChapterLocal>('chaptersBox');
   await Hive.openBox<BookLocal>('booksBox');
   await Hive.openBox<NewDB>('newDB');
+  await Hive.openBox<NewDB>('db');
   await Hive.openBox<DBConfig>('dbConfig');
   await Hive.openBox<LexiconLocal>('lexiconBox');
   await Hive.openBox<StaticContentLocal>('staticContentBox');
@@ -78,6 +79,7 @@ Future<void> initApp() async {
   Store<AppState> store = await AppStoreRetriever().retrieveStore();
   runApp(
     MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: StoreProvider<AppState>(
         store: store,
         child: const App(),

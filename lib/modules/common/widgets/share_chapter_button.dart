@@ -21,7 +21,7 @@ class ShareChapterButton extends StatelessWidget {
         child: Icon(
           Icons.share,
           color: Colors.white,
-          size: 25,
+          size: 20,
         ),
       ),
     );

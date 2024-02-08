@@ -30,9 +30,9 @@ class AppStateReducer {
   static reduceDarkMode(bool darkMode, action) {
     if (action is ToggleDarkMode) {
       return !darkMode;
+    } else {
+      return darkMode;
     }
-
-    return darkMode;
   }
 
   static double reduceTextSize(double textSizeSteps, action) {

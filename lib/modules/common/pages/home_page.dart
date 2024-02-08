@@ -6,7 +6,7 @@ import 'package:day_night_switcher/day_night_switcher.dart';
 import 'package:dio/dio.dart';
 import 'package:flrx/flrx.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart' hide Page;
+import 'package:flutter/material.dart' hide Pageredux;
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:hive/hive.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
@@ -24,6 +24,7 @@ import 'package:ncb/newdb.dart';
 import 'package:ncb/static_content_local.dart';
 import 'package:ncb/store/states/app_state.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../book_local.dart';
 import '../../../chapter_local.dart';
@@ -47,9 +48,10 @@ class HomePage extends StatefulWidget {
   HomePageState createState() => HomePageState();
 }
 
-class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
+class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   var page = 0;
+  bool first = true;
   bool showSearchView = false;
   String query = "";
   bool loading = true;
@@ -58,6 +60,8 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
   final _messagingServiced = MessagingService();
   Box<DBConfig> dbBox = Hive.box<DBConfig>('dbConfig');
   Box<NewDB> newdbBox = Hive.box<NewDB>('newDB');
+  Box<NewDB> dbbBox = Hive.box<NewDB>('db');
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   Stream<bool> checkConnectivity() async* {
     while (!connection) {
       final connectivityResult =
@@ -98,91 +102,22 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
   void initState() {
     page = widget.page;
     _messagingServiced.init(context);
+
     // TODO: implement initState
     super.initState();
   }
 
   int index = 0;
-  @override
-  Widget buildContent(BuildContext context, AppVM viewModel) {
-    if (page == 2) {
-      index = 1;
-      // print("on bookmark");
-      //print(index);
-    } else {
-      index = 0;
-    }
-    return Scaffold(
-      bottomNavigationBar: showSearchView
-          ? null
-          : CustomNavBar(
-              index: index,
-              bottomBarCallBack: (int id) {
-                setState(() {
-                  page = id;
-                });
-              },
-            ),
-      key: scaffoldKey,
-      drawer: buildDrawer(),
-      body: StreamBuilder<bool>(
-        stream: checkConnectivity(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            connection = snapshot.data!;
-            if (connection) {
-              if (!requested) {
-                if (dbBox.values.length > 0) {
-                  if (newdbBox.values.length <= 1) {
-                    loading = true;
-                    createRecord();
-                    newdbBox.add(NewDB(created: true));
-                    newdbBox.add(NewDB(created: true));
-                  } else {
-                    loading = false;
-                    connection = true;
-                    // print("New df");
-                  }
-                } else {
-                  loading = true;
-                  createRecord();
-                }
-                requested = true;
-              }
-            } else {
-              // print("offline mode");
-              if (dbBox.values.length == 0) {
-                loading = true;
-              } else {
-                //  print("d");
-                loading = false;
-              }
-              loading = false;
-              requested = false;
-            }
 
-            return Stack(
-              children: [
-                buildAppBar(),
-                loading
-                    ? LoadingScreen(
-                        loadingScreenCallBack: (bool value) {
-                          dbBox.add(DBConfig(created: true));
-                          print("Loading value $loading");
-                          setState(() {
-                            loading = value;
-                          });
-                        },
-                        connection: connection,
-                      )
-                    : const SizedBox(),
-              ],
-            );
-          }
-          return Container();
-        },
-      ),
-    );
+  Future<bool?> getDarkTheme() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool? d = prefs.getBool("darkMode");
+    return d;
+  }
+
+  Future<void> setDarkTheme(bool value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool("darkMode", value);
   }
 
   FloatingSearchAppBar buildAppBar() {
@@ -252,7 +187,7 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
     );
   }
 
-  static List<Widget> buildAppBarActions() {
+  List<Widget> buildAppBarActions() {
     return [
       StoreConnector<AppState, AppVM>(
         converter: (store) => AppVM()..init(store),
@@ -262,8 +197,9 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
             DayNightSwitcherIcon(
               isDarkModeEnabled: vm.darkMode,
               dayBackgroundColor: Theme.of(context).primaryColor,
-              onStateChanged: (_) {
+              onStateChanged: (_) async {
                 if (_ == vm.darkMode) return;
+                print("Changed Value ${_}");
                 vm.toggleDarkMode();
               },
             ),
@@ -384,14 +320,6 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
     Navigator.pop(context);
   }
 
-  @override
-  AppVM initViewModel() => AppVM();
-
-  // @override
-  // AppVM initViewModel() {
-  //   return AppVM();
-  // }
-
   Future<void> shareApp() async {
     if (kIsWeb) {
       return Share.share(Uri.base.toString());
@@ -408,6 +336,81 @@ class HomePageState extends State<HomePage> with Page<AppState, AppVM> {
         "https://apps.apple.com/in/app/new-community-bible/id1439308209",
       );
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (page == 2) {
+      index = 1;
+      // print("on bookmark");
+      //print(index);
+    } else {
+      index = 0;
+    }
+    return Scaffold(
+      bottomNavigationBar: showSearchView
+          ? null
+          : CustomNavBar(
+              index: index,
+              bottomBarCallBack: (int id) {
+                setState(() {
+                  page = id;
+                });
+              },
+            ),
+      key: scaffoldKey,
+      drawer: buildDrawer(),
+      body: StreamBuilder<bool>(
+        stream: checkConnectivity(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            connection = snapshot.data!;
+            if (connection) {
+              if (!requested) {
+                if (dbbBox.values.length == 0) {
+                  loading = true;
+                  dbbBox.add(NewDB(created: true));
+                  createRecord();
+                } else {
+                  loading = false;
+                  // createRecord();
+                }
+                requested = true;
+              }
+            } else {
+              // print("offline mode");
+              if (dbBox.values.length == 0) {
+                loading = true;
+              } else {
+                //  print("d");
+                loading = false;
+              }
+              loading = false;
+              requested = false;
+            }
+
+            return Stack(
+              children: [
+                buildAppBar(),
+                loading
+                    ? LoadingScreen(
+                        loadingScreenCallBack: (bool value) {
+                          dbBox.add(DBConfig(created: true));
+                          print("Loading value $loading");
+                          setState(() {
+                            loading = value;
+                          });
+                        },
+                        connection: connection,
+                      )
+                    : const SizedBox(),
+              ],
+            );
+          }
+          return Container();
+        },
+      ),
+    );
   }
 }
 

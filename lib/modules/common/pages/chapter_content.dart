@@ -34,6 +34,7 @@ typedef void BookmarckChangedCallBack(Verselocal verselocal);
 class ChapterContent extends StatefulWidget {
   final BookLocal book;
   final ChapterLocal chapter;
+  final int versId;
   String query = "";
   final BookmarckChangedCallBack bookmarckChangedCallBack;
   final String? currentAudio;
@@ -46,6 +47,7 @@ class ChapterContent extends StatefulWidget {
     this.currentAudio,
     required this.onAudioChanged,
     required this.bookmarckChangedCallBack,
+    required this.versId,
   }) : super(key: key);
 
   @override
@@ -59,20 +61,40 @@ class ChapterContentState extends State<ChapterContent> {
   final ItemScrollController itemScrollController = ItemScrollController();
   Box<Verselocal> bookmarkBox = Hive.box<Verselocal>('bookmarks');
   List<Verselocal> verses = [];
-  List<Verselocal> versl = [];
+
   bool first = true;
+  late ChapterLocal chapterLocal;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    List<Verselocal> verse = widget.chapter.verses!;
+    if (verse.isEmpty) {
+      Box<Verselocal> verseBox = Hive.box<Verselocal>('verseBox');
+      verse = verseBox.values
+          .where((element) => element.chapterId == widget.chapter.id)
+          .toList();
+      print(widget.versId);
+      WidgetsBinding.instance
+          .addPostFrameCallback((_) => automatedScrolling(context));
+    }
+    chapterLocal = ChapterLocal(
+        id: widget.chapter.id,
+        audio: widget.chapter.audio,
+        displayPosition: widget.chapter.displayPosition,
+        bookId: widget.chapter.bookId,
+        name: widget.chapter.name,
+        verses: verse,
+        book: widget.chapter.book);
     chapter = Chapter(
         id: widget.chapter.id,
         audio: widget.chapter.audio,
         displayPosition: widget.chapter.displayPosition,
         bookId: widget.chapter.bookId,
         name: widget.chapter.name,
-        verses: widget.chapter.verses!
+        verses: verse
             .map((e) => Verse(
                 id: e.id,
                 verseNo: e.verseNo,
@@ -80,6 +102,18 @@ class ChapterContentState extends State<ChapterContent> {
                 order: e.order,
                 chapterId: widget.chapter.id))
             .toList());
+  }
+
+  void automatedScrolling(BuildContext context) {
+    Verselocal verse = chapterLocal.verses!
+        .where((element) => element.verseNo == widget.versId)
+        .first;
+    itemScrollController.scrollTo(
+      index: widget.versId,
+      duration: Duration(
+        milliseconds: max(100, verse.verseNo * 20),
+      ),
+    );
   }
 
   Widget buildBody() {
@@ -100,12 +134,10 @@ class ChapterContentState extends State<ChapterContent> {
   Chapter? chapter;
   @override
   Widget build(BuildContext context) {
-    var verses = widget.chapter!.verses!;
+    var verses = chapterLocal.verses!;
     if (first) {
       first = false;
     }
-    print(versl.length);
-
     var hasAudio = widget.chapter.audio?.isNotEmpty == true;
 
     return Scaffold(
@@ -124,7 +156,6 @@ class ChapterContentState extends State<ChapterContent> {
         preferredSize: const Size.fromHeight(50),
         child: buildAppBar(),
       ),
-
       // AppBar(
       //   title: Text("${widget.book.name.titleCase}: ${widget.chapter.name}"),
       //   actions: <Widget>[
@@ -165,7 +196,14 @@ class ChapterContentState extends State<ChapterContent> {
                 if (index == verses.length + 1) {
                   return buildNavigateChapters();
                 }
-
+                if (first) {
+                  itemScrollController.scrollTo(
+                    index: widget.versId,
+                    duration: Duration(
+                      milliseconds: max(100, widget.versId * 20),
+                    ),
+                  );
+                }
                 if (index < verses.length + 1) {
                   var vers = verses[index - 1];
                   // print(vers.order);
@@ -482,7 +520,7 @@ class ChapterContentState extends State<ChapterContent> {
           chapter: chapter!,
           bookName: widget.book.name.titleCase,
         ),
-        if (!showSearchView) ...buildAppBarActions(),
+        if (!showSearchView) ...HomePageState().buildAppBarActions(),
       ],
       body: Container(),
     );
