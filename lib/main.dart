@@ -79,6 +79,7 @@ Future<void> initApp() async {
   Store<AppState> store = await AppStoreRetriever().retrieveStore();
   runApp(
     MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: StoreProvider<AppState>(
         store: store,
         child: const App(),

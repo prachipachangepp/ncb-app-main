@@ -157,7 +157,6 @@ class ChapterContentState extends State<ChapterContent> {
         preferredSize: const Size.fromHeight(50),
         child: buildAppBar(),
       ),
-
       // AppBar(
       //   title: Text("${widget.book.name.titleCase}: ${widget.chapter.name}"),
       //   actions: <Widget>[

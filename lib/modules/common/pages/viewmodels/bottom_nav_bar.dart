@@ -39,7 +39,8 @@ class _CustomNavBarState extends State<CustomNavBar> {
   Widget build(BuildContext context) {
     //print("Current index : " + currenTIndex.toString());
     return BottomNavigationBar(
-      backgroundColor: Theme.of(context).canvasColor,
+      backgroundColor: Color(0xffcfef4f5),
+      // Theme.of(context).colorScheme.surface,
       currentIndex: currenTIndex,
       onTap: (int i) {
         _onItemTapped(i, context);
