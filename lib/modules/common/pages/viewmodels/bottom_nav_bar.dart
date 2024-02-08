@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:ncb/modules/common/pages/home_page.dart';
 import 'package:ncb/modules/common/pages/testament_page.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -71,8 +72,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
     } else if (index == 1) {
       widget.bottomBarCallBack(2);
     } else if (index == 2) {
-      _shareContent(
-          "https://play.google.com/store/apps/details?id=in.wi.ncb&hl=en_IN&gl=US");
+      HomePageState().shareApp();
     }
     // });
   }

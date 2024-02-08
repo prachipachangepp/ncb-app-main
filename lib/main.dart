@@ -50,6 +50,7 @@ Future<void> main() async {
   await Hive.openBox<ChapterLocal>('chaptersBox');
   await Hive.openBox<BookLocal>('booksBox');
   await Hive.openBox<NewDB>('newDB');
+  await Hive.openBox<NewDB>('db');
   await Hive.openBox<DBConfig>('dbConfig');
   await Hive.openBox<LexiconLocal>('lexiconBox');
   await Hive.openBox<StaticContentLocal>('staticContentBox');

@@ -139,6 +139,7 @@ class ChapterPageState extends State<ChapterPage> {
       bookmarckChangedCallBack: (Verselocal verselocal) {
         // print("Chnaged status for id ${verselocal.id} to ${verselocal.save}");
       },
+      versId: chapter!.verses!.first.verseNo,
     );
   }
 

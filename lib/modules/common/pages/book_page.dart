@@ -1,5 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:day_night_switcher/day_night_switcher.dart';
 import 'package:flutter/material.dart' hide Page;
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:hive/hive.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:ncb/book_local.dart';
@@ -8,10 +10,13 @@ import 'package:ncb/modules/common/pages/home_page.dart';
 import 'package:ncb/modules/common/pages/search_page.dart';
 import 'package:ncb/modules/common/pages/viewmodels/bottom_nav_bar.dart';
 import 'package:ncb/verselocal.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../app.dart';
 import '../../../commentary_local.dart';
 import '../../../footnoteslocal.dart';
 import '../../../store/actions/actions.dart';
+import '../../../store/states/app_state.dart';
 import '../models/verse.dart';
 
 // class BookPage extends StatelessWidget with Page<AppState, BookPageVM> {
@@ -464,6 +469,7 @@ class _BookPageState extends State<BookPage> {
   late Box<Verselocal> verseBox;
   late Box<Verselocal> bookmarkBox;
   bool showSearchView = false;
+  bool first = true;
   String query = "";
 
   @override
@@ -472,6 +478,9 @@ class _BookPageState extends State<BookPage> {
     booksBox = Hive.box<BookLocal>('booksBox');
     verseBox = Hive.box<Verselocal>('verseBox');
     bookmarkBox = Hive.box<Verselocal>('bookmarks');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      first = false;
+    });
   }
 
   Widget buildBody() {
@@ -485,6 +494,17 @@ class _BookPageState extends State<BookPage> {
         buildOnSuccess(context, widget.bookId),
       ],
     );
+  }
+
+  Future<bool> getDarkTheme() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool? d = prefs.getBool("darkMode");
+    return d!;
+  }
+
+  Future<void> setDarkTheme(bool value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool("darkMode", value);
   }
 
   @override
@@ -537,7 +557,60 @@ class _BookPageState extends State<BookPage> {
   }
 
   List<Widget> buildAppBarActions() {
-    return HomePageState.buildAppBarActions();
+    return [
+      StoreConnector<AppState, AppVM>(
+        converter: (store) => AppVM()..init(store),
+        builder: (context, vm) => Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            DayNightSwitcherIcon(
+              isDarkModeEnabled: vm.darkMode,
+              dayBackgroundColor: Theme.of(context).primaryColor,
+              onStateChanged: (_) async {
+                // print("First is $first");
+                // if (first) {
+                //
+                // }
+                if ((_) != vm.darkMode) {
+                  first = true;
+                }
+                if (first) {
+                  await vm.toggleDarkMode();
+                }
+              },
+            ),
+            PopupMenuButton(
+              icon: const Icon(Icons.text_rotation_none),
+              itemBuilder: (BuildContext context) {
+                return [
+                  PopupMenuItem(
+                    value: 100,
+                    child: buildChangeTextSize(vm, context),
+                  ),
+                ];
+              },
+            ),
+          ],
+        ),
+      ),
+    ];
+  }
+
+  static Row buildChangeTextSize(AppVM vm, BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        IconButton(
+          onPressed: vm.decreaseTextSize,
+          icon: const Text('-'),
+        ),
+        const Text('A'),
+        IconButton(
+          onPressed: vm.increaseTextSize,
+          icon: const Text('+'),
+        ),
+      ],
+    );
   }
 
   Future<void> syncDataToOffline() async {
@@ -688,7 +761,7 @@ class _BookPageState extends State<BookPage> {
         FloatingSearchBarAction.searchToClear(
           color: theme.primaryIconTheme.color,
         ),
-        if (!showSearchView) ...buildAppBarActions(),
+        if (!showSearchView) ...HomePageState().buildAppBarActions(),
       ],
       body: Container(),
     );

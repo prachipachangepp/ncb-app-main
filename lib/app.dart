@@ -48,8 +48,8 @@ class AppVM extends ViewModel<AppState> {
     dispatch = store.dispatch;
   }
 
-  void toggleDarkMode() {
-    dispatch(ToggleDarkMode());
+  Future<void> toggleDarkMode() async {
+    await dispatch(ToggleDarkMode());
   }
 
   void increaseTextSize() {
