@@ -38,8 +38,17 @@ class _CustomNavBarState extends State<CustomNavBar> {
   @override
   Widget build(BuildContext context) {
     //print("Current index : " + currenTIndex.toString());
+    var theme = Theme.of(context);
+    var bottomBarColor = theme.brightness == Brightness.dark
+        ? theme.colorScheme.surface
+        : Color(0xffcfde2e5);
+    var textStyle = TextStyle(
+      color:
+          theme.brightness == Brightness.dark ? Colors.white : Colors.black54,
+    );
     return BottomNavigationBar(
-      backgroundColor: Color(0xffcfef4f5),
+      backgroundColor: bottomBarColor,
+      // Color(0xffcfde2e5),
       // Theme.of(context).colorScheme.surface,
       currentIndex: currenTIndex,
       onTap: (int i) {
@@ -50,15 +59,24 @@ class _CustomNavBarState extends State<CustomNavBar> {
       },
       items: [
         BottomNavigationBarItem(
-          icon: const FaIcon(FontAwesomeIcons.bible),
+          icon: FaIcon(
+            FontAwesomeIcons.bible,
+            color: currenTIndex == 0 ? Colors.red : textStyle.color,
+          ),
           label: 'NCB',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.bookmark),
+          icon: Icon(
+            Icons.bookmark,
+            color: currenTIndex == 1 ? Colors.red : textStyle.color,
+          ),
           label: 'Bookmark',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.share),
+          icon: Icon(
+            Icons.share,
+            color: currenTIndex == 2 ? Colors.red : textStyle.color,
+          ),
           label: 'Share',
         ),
       ],
