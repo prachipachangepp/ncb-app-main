@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Pageredux;
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:hive/hive.dart';
+import 'package:marquee/marquee.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:ncb/app.dart';
 import 'package:ncb/dbconfig.dart';
@@ -135,7 +136,24 @@ class HomePageState extends State<HomePage> {
       liftOnScrollElevation: 0,
       hintStyle: textStyle,
       titleStyle: textStyle,
-      title: Text(appBarTitle, style: textStyle),
+      title: Container(
+        width: 200,
+          child: Marquee(
+           text:appBarTitle, style: textStyle,
+        scrollAxis: Axis.horizontal,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        blankSpace: 100,
+        velocity: 20,
+        pauseAfterRound: Duration(seconds: 2),
+        showFadingOnlyWhenScrolling: false,
+        fadingEdgeStartFraction: 0.1,
+        fadingEdgeEndFraction: 0.1,
+        startPadding: 10.0,
+        accelerationDuration: Duration(seconds: 1),
+        accelerationCurve: Curves.linear,
+        decelerationDuration: Duration(milliseconds: 500),
+        decelerationCurve: Curves.easeOut,
+      )),
       onQueryChanged: (q) => setState(() => query = q),
       onSubmitted: (q) => setState(() => query = q),
       debounceDelay: const Duration(milliseconds: 500),

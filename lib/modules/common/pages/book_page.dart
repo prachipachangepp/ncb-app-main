@@ -3,6 +3,7 @@ import 'package:day_night_switcher/day_night_switcher.dart';
 import 'package:flutter/material.dart' hide Page;
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:hive/hive.dart';
+import 'package:marquee/marquee.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:ncb/book_local.dart';
 import 'package:ncb/chapter_local.dart';
@@ -308,7 +309,23 @@ class _BookPageState extends State<BookPage> {
       liftOnScrollElevation: 0,
       hintStyle: textStyle,
       titleStyle: textStyle,
-      title: Text("${bookLocal?.name}", style: textStyle),
+      title: Container(
+        width: 200,
+        child: Marquee(text:"${bookLocal?.name}", style: textStyle,
+          scrollAxis: Axis.horizontal,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          blankSpace: 100,
+          velocity: 20,
+          pauseAfterRound: Duration(seconds: 2),
+          showFadingOnlyWhenScrolling: false,
+          fadingEdgeStartFraction: 0.1,
+          fadingEdgeEndFraction: 0.1,
+          startPadding: 10.0,
+          accelerationDuration: Duration(seconds: 1),
+          accelerationCurve: Curves.linear,
+          decelerationDuration: Duration(milliseconds: 500),
+          decelerationCurve: Curves.easeOut,),
+      ),
 //title: Text("${bookLocal?.name}: ${widget.chapter.name}", style: textStyle),
       onQueryChanged: (q) => setState(() => query = q),
       onSubmitted: (q) => setState(() => query = q),
