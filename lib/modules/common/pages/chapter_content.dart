@@ -290,7 +290,7 @@ class ChapterContentState extends State<ChapterContent> {
 
   Container buildNavigateChapters() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(10, 64, 10, 128),
+    //  padding: const EdgeInsets.fromLTRB(10, 64, 10, 128),
       child: Row(
         children: [
           ElevatedButton(
