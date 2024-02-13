@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -41,6 +42,8 @@ import '../models/testament.dart';
 import '../models/verse.dart';
 import '../service/messaging_services.dart';
 import '../service/testament_service.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key, required this.page}) : super(key: key);
@@ -103,7 +106,7 @@ class HomePageState extends State<HomePage> {
   void initState() {
     page = widget.page;
     _messagingServiced.init(context);
-
+    fetchData();
     // TODO: implement initState
     super.initState();
   }
@@ -978,5 +981,26 @@ class _LoadingScreenState extends State<LoadingScreen> {
     return widget.connection
         ? activeInternetLoadingScreen()
         : inactiveInternetLoadingScreen();
+  }
+}
+
+
+
+Future<bool> fetchData() async {
+
+  String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+ // String apiUrl = 'https://admin.newcommunitybible.in/api/get-updates?date=2024-02-12';
+  String apiUrl = 'https://admin.newcommunitybible.in/api/get-updates?date=$formattedDate';
+
+  final response = await http.get(Uri.parse(apiUrl));
+
+  if (response.statusCode == 200) {
+    print(formattedDate);
+  //  print("successful");
+    print(response.body);
+    return jsonDecode(response.body);
+  } else {
+    throw Exception('Failed to load data');
   }
 }
