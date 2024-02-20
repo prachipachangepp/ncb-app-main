@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:ncb/modules/common/pages/home_page.dart';
 import 'package:ncb/modules/common/pages/testament_page.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../bookmark.dart';
+import '../home_page.dart';
 
 typedef void BottomBarCallBack(int id);
 
@@ -83,7 +83,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
     );
   }
 
-  void _onItemTapped(int index, BuildContext context) {
+  void _onItemTapped(int index, BuildContext context) async {
     // setState(() {
     currenTIndex = index;
     if (index == 0) {

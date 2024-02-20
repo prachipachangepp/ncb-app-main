@@ -131,16 +131,30 @@ class ChapterPageState extends State<ChapterPage> {
 
     /// verses should be loaded by child ideally
     // print(chapter!.displayPosition.toString());
-    return ChapterContent(
-      chapter: chapter!,
-      book: bookLocal!,
-      currentAudio: currentAudio,
-      onAudioChanged: (value) => setState(() => currentAudio = value),
-      bookmarckChangedCallBack: (Verselocal verselocal) {
-        // print("Chnaged status for id ${verselocal.id} to ${verselocal.save}");
-      },
-      versId: chapter!.verses!.first.verseNo,
-    );
+    try {
+      return ChapterContent(
+        chapter: chapter!,
+        book: bookLocal!,
+        currentAudio: currentAudio,
+        onAudioChanged: (value) => setState(() => currentAudio = value),
+        bookmarckChangedCallBack: (Verselocal verselocal) {
+          // print("Chnaged status for id ${verselocal.id} to ${verselocal.save}");
+        },
+        versId: chapter!.verses!.first.verseNo,
+      );
+    } catch (e) {
+      setState(() {});
+      return ChapterContent(
+        chapter: chapter!,
+        book: bookLocal!,
+        currentAudio: currentAudio,
+        onAudioChanged: (value) => setState(() => currentAudio = value),
+        bookmarckChangedCallBack: (Verselocal verselocal) {
+          // print("Chnaged status for id ${verselocal.id} to ${verselocal.save}");
+        },
+        versId: chapter!.verses!.first.verseNo,
+      );
+    }
   }
 
   PreferredSizeWidget? buildAppBar(
